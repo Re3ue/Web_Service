@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Re3ue</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+
+    {% block css %}
+    {% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="navigate_container">
+            <div class="navigate_left">
+                <div class="navigate_main">
+                    <a href="{{ url_for('blueprint_route.main') }}">Main</a>
+                </div>
+
+                <div class="navigate_about">
+                    <a href="{{ url_for('blueprint_route.about') }}">About</a>
+                </div>
+            </div>
+            <div class="navigate_right">
+                <div class="navigate_profile">
+                    <a href="{{ url_for('blueprint_route.profile') }}">Profile</a>
+                </div>
+
+                <div class="navigate_sign">
+                    <a href="{{ url_for('blueprint_route.sign_in') }}">Sign In</a>
+                </div>
+            </div>
+        </div>
+
+    </header>
+
+    <!-- Main -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div>2025</div>
+    </footer>
+</body>
+</html>

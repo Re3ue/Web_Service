@@ -1,0 +1,42 @@
+header {
+    background-color: #eee;
+    border-bottom: 1px solid #ccc;
+
+    padding: 1rem;
+}
+
+.navigate_container {
+    max-width: 800px;
+
+    margin: 0 auto;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.navigate_container a {
+    text-decoration: none;
+
+    color: #000;
+    font-weight: bold;
+}
+.navigate_container a:hover {
+    text-decoration: underline;
+}
+
+.navigate_left {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+.navigate_main {}
+.navigate_about {}
+
+.navigate_right {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+.navigate_profile {}
+.navigate_sign {}
