@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  flask-app:
+    build: .
+    ports:
+      - "5050:5000"
+    env_file:
+      - .env
+    depends_on:
+      - mysql-db
+    volumes:
+      - ./app:/app
+
+  mysql-db:
+    image: mysql:8.0
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-db_data:/var/lib/mysql
+
+volumes:
+  mysql-db_data:
