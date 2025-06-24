@@ -3,6 +3,9 @@
 # Import : External
 from flask import Blueprint, render_template
 
+# Import : File
+from .db import open_db
+
 ########## ########## ########## ##########
 
 blueprint_route = Blueprint('blueprint_route', __name__)
@@ -33,7 +36,19 @@ def sign_up() :
 
 @blueprint_route.route('/post/<int:post_id>')
 def post(post_id) :
-    return render_template('post.html')
+    connect_db = open_db()
+
+    with connect_db.cursor() as cursor :
+        sql = "SELECT * FROM post WHERE post_id = %s"
+            
+        cursor.execute(sql, (post_id))
+
+        post = cursor.fetchone() # Get Fetch One
+
+        if not post :
+            return "No Post"
+
+    return render_template('post.html', post = post)
 
 # Authenticate
 
