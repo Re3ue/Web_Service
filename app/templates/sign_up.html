@@ -7,5 +7,17 @@
 
 <!-- Main -->
 {% block content %}
+<div class="sign_up_container">
+    <div class="sign_up_title">Sign Up</div>
 
+    <form action="" class="sign_up_form">
+        <input type="text" class="sign_up_form_id" placeholder="ID" required>
+        <input type="password" class="sign_up_form_password" placeholder="Password", required>
+        <button type="submit" class="sign_up_form_button">Sign Up</button>
+    </form>
+
+    <div class="sign_in_container">
+        <a class="sign_in_link" href="/sign_in">Sign In</a>
+    </div>
+</div>
 {% endblock %}

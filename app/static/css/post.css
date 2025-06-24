@@ -1,0 +1,39 @@
+.post_container {
+    max-width: 800px;
+    background-color: #fff;
+
+    margin: 2rem auto;
+    padding: 2rem;
+    
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+}
+
+.post_title {
+    font-size: 2rem;
+
+    margin-bottom: 1rem;
+}
+
+.post_content {
+    font-size: 1.25rem;
+    line-height: 1.5;
+
+    margin: 1rem 0;
+    padding: 1rem 0;
+
+    white-space: pre-wrap;
+}
+
+.post_information {
+    font-size: 1rem;
+    color: #aaa;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.post_date {}
+
+.post_upvote {}

@@ -1,0 +1,40 @@
+/* Post List */
+
+.post_list_container {}
+
+.post_list_title {
+    font-size: 2rem;
+    font-weight: bold;
+
+    margin: 1rem 0;
+}
+
+.post_list {}
+
+/* Post Element */
+
+.post_element_container {}
+
+.post_element_title {}
+
+.post_element_content {}
+
+.post_element_information {}
+
+/* Page List */
+
+.page_list_container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    margin: 1rem 0;
+    gap: 1rem;
+}
+
+.page_list {}
+
+.previous_page_button {}
+
+.next_page_button {}

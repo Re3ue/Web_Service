@@ -7,5 +7,14 @@
 
 <!-- Main -->
 {% block content %}
+<div class="post_container">
+    <div class="post_title">Edit Post</div>
 
+    <form action="" class="post_form">
+        <input type="text" class="post_form_title" placeholder="Title" required>
+        <textarea name="" class="post_form_content" placeholder="Content" required></textarea>
+        <input type="date" class="post_form_date" required>
+        <button type="submit" class="post_form_button">Post</button>
+    </form>
+</div>
 {% endblock %}
