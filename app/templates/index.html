@@ -7,18 +7,23 @@
 
 <!-- Main -->
 {% block content %}
-<div class="post_list_container">
-    <div class="post_list_title">Post List</div>
-    <div class="post_list">
+<div class="all_post_container">
+    <div class="all_post_title">Post List</div>
+    <div class="all_post">
         <!-- JS : Post List -->
     </div>
 </div>
 
-<div class="page_list_container">
+<div class="all_page_container">
     <button class="previous_page_button" onclick="previousPage()">Previous</button>
-    <div class="page_list">
+    <div class="all_page">
         <!-- JS : Page List -->
     </div>
     <button class="next_page_button" onclick="nextPage()">Next</button>
 </div>
+{% endblock %}
+
+<!-- JS -->
+{% block js %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}

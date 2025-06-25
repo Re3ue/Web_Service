@@ -41,7 +41,7 @@ def post(post_id) :
     with connect_db.cursor() as cursor :
         sql = "SELECT * FROM post WHERE post_id = %s"
             
-        cursor.execute(sql, (post_id))
+        cursor.execute(sql, ( post_id, ))
 
         post = cursor.fetchone() # Get Fetch One
 

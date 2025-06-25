@@ -1,16 +1,16 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    const postForm = document.querySelector(".post_form");
-    const postFormTitle = document.querySelector(".post_form_title");
-    const postFormContent = document.querySelector(".post_form_content");
-    const postFormDate = document.querySelector(".post_form_date");
+    const postFormHTML = document.querySelector(".post_form");
+    const postFormTitleHTML = document.querySelector(".post_form_title");
+    const postFormContentHTML = document.querySelector(".post_form_content");
+    const postFormDateHTML = document.querySelector(".post_form_date");
 
     // Submit : Create Post
-    postForm.addEventListener("submit", async (event) => {
+    postFormHTML.addEventListener("submit", async (event) => {
         event.preventDefault();
 
-        const title = postFormTitle.value;
-        const content = postFormContent.value;
-        const date = postFormDate.value;
+        const title = postFormTitleHTML.value;
+        const content = postFormContentHTML.value;
+        const date = postFormDateHTML.value;
 
         // Check : Require
         if (!title || !content || !date) {
