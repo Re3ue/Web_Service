@@ -1,4 +1,39 @@
-/* Post List */
+/* Search */
+
+.search_container {
+    max-width: 800px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    margin: 2rem 0;
+}
+
+.search_input {  
+    font-size: 1rem;
+ 
+    width: 80%;
+    height: 40px;
+
+    box-sizing: border-box;
+
+    padding: 0.5rem;
+}
+
+.search_button {    
+    font-size: 1rem;
+    
+    width: 20%;
+    height: 40px;
+
+    box-sizing: border-box;
+
+    padding: 0.5rem;
+}
+
+/* All Post */
 
 .all_post_container {}
 
@@ -30,7 +65,7 @@
 
 .all_post_element_information {}
 
-/* Page List */
+/* All Page */
 
 .all_page_container {
     display: flex;

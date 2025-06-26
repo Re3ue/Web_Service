@@ -45,7 +45,9 @@ def create_post() :
     
     finally :
         connect_db.close()
-    
+
+
+
 # API : Get All Post
 @blueprint_api.route('/api/get_all_post', methods = ['GET'])
 def get_all_post() :
@@ -61,14 +63,14 @@ def get_all_post() :
             all_post = cursor.fetchall() # Get All Post
 
             if not all_post :
-                return "Not Exist : All Post"
+                return jsonify({"result" : 0, "error" : "Not Exist : All Post"})
         
         return jsonify({"result" : 1, "all_post" : all_post})
 
     except Exception as e :
         print(f"[ ERROR ] Fail to Get All Post : {e}")
 
-        return jsonify({"error" : "Fail to Get All Post"})
+        return jsonify({"result" : 0, "error" : "Fail to Get All Post"})
     
     finally :
         connect_db.close()
@@ -88,14 +90,51 @@ def get_a_post(post_id) :
             a_post = cursor.fetchone() # Get A Post
 
             if not a_post :
-                return "Not Exist : A Post"
+                return jsonify({"result" : 0, "error" : "Not Exist : A Post"})
         
         return jsonify({"result" : 1, "a_post" : a_post})
 
     except Exception as e :
         print(f"[ ERROR ] Fail to Get A Post : {e}")
 
-        return jsonify({"error" : "Fail to Get A Post"})
+        return jsonify({"result" : 0, "error" : "Fail to Get A Post"})
+    
+    finally :
+        connect_db.close()
+
+# API : Search Post
+@blueprint_api.route('/api/search_post', methods = ['GET'])
+def search_post() :
+    search_input = request.args.get("search_input")
+
+    if not search_input :
+        return jsonify({"result" : 0, "error" : "Miss Search Input"})
+    
+    try :
+        connect_db = open_db()
+
+        with connect_db.cursor() as cursor :
+            sql = """
+                SELECT * FROM post
+                WHERE post_title LIKE %s OR post_content LIKE %s
+                ORDER BY post_id DESC
+            """
+            
+            like_search_input = f"%{search_input}%"
+
+            cursor.execute(sql, ( like_search_input, like_search_input ))
+
+            search_post = cursor.fetchall()
+
+            if not search_post :
+                return jsonify({"result" : 0, "error" : "Not Exist : Search Post"})
+
+            return jsonify({"result" : 1, "search_post" : search_post})
+
+    except Exception as e :
+        print(f"[ ERROR ] Fail to Search Post : {e}")
+
+        return jsonify({"result" : 0, "error" : "Fail to Search Post"})
     
     finally :
         connect_db.close()

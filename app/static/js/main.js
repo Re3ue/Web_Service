@@ -13,6 +13,9 @@ let allGroupCount = 0;
 document.addEventListener("DOMContentLoaded", async () => {
     // Get All Post
     getAllPost();
+
+    // Event of "Search" Button => Search Post
+    const searchButtonHTML = document.querySelector(".search_button").addEventListener("click", searchPost);
 })
 
 async function getAllPost() {
@@ -22,6 +25,13 @@ async function getAllPost() {
 
         const result = getAllPostResult.result;
         allPost = getAllPostResult.all_post;
+        const error = getAllPostResult.error;
+
+        if (result === 0) {
+            alert(`Fail to Get All Post : ${error}`);
+
+            return;
+        }
 
         renderAllPost(currentPage)
     } catch (e) {
@@ -116,5 +126,33 @@ function nextPage() {
         }
 
         renderAllPost(currentPage);
+    }
+}
+
+async function searchPost() {
+    const searchInput = document.querySelector(".search_input").value;
+
+    try {
+        const response = await fetch(`/api/search_post?search_input=${encodeURIComponent(searchInput)}`);
+        const searchPostResult = await response.json();
+
+        const result = searchPostResult.result;
+        searchPost = searchPostResult.search_post;
+        const error = searchPostResult.error;
+
+        if (result === 0) {
+            alert(`Fail to Search Post : ${error}`);
+
+            return;
+        }
+
+        allPost = searchPost;
+
+        let currentPage = 1;
+        let currentPageGroup = 1;
+
+        renderAllPost(currentPage);
+    } catch (e) {
+        console.error(`Fail to Search Post : ${e}`);
     }
 }
