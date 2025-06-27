@@ -7,6 +7,10 @@
 
 <!-- Main -->
 {% block content %}
+<div class="edit_delete_container">
+    <button class="edit_button" data-post-id="{{ post.post_id }}">Edit</button>
+    <button class="delete_button" data-post-id="{{ post.post_id }}">Delete</button>
+</div>
 <div class="post_container">
     <div class="post_title">{{ post.post_title }}</div>
     <div class="post_content">{{ post.post_content }}</div>
@@ -19,4 +23,5 @@
 
 <!-- JS -->
 {% block js %}
+<script src="{{ url_for('static', filename='js/post.js') }}"></script>
 {% endblock %}

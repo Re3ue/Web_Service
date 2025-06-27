@@ -41,7 +41,7 @@ def create_post() :
     except Exception as e :
         print(f"[ ERROR ] Fail to Create Post : {e}")
 
-        return jsonify({"error" : "Fail to Create Post"})
+        return jsonify({"result" : 0, "error" : "Fail to Create Post"})
     
     finally :
         connect_db.close()
@@ -135,6 +135,69 @@ def search_post() :
         print(f"[ ERROR ] Fail to Search Post : {e}")
 
         return jsonify({"result" : 0, "error" : "Fail to Search Post"})
+    
+    finally :
+        connect_db.close()
+
+# API : Edit Post
+@blueprint_api.route('/api/edit_post_post/<int:post_id>', methods = ['POST'])
+def edit_post_post(post_id) :
+    post_data = request.get_json() # Get Post Data
+
+    post_title = post_data.get('title')
+    post_content = post_data.get('content')
+    post_date = post_data.get('date')
+
+    # Check : Require
+    if (not post_title) or (not post_content) or (not post_data) :
+        return jsonify({"error" : "Miss Require Fields"})
+    
+    # SQL Query : Insert to Post Table
+    try :
+        connect_db = open_db()
+
+        with connect_db.cursor() as cursor :
+            sql = """
+                UPDATE post
+                SET post_title = %s,
+                    post_content = %s,
+                    post_date = %s
+                WHERE post_id = %s
+            """
+            
+            cursor.execute(sql, ( post_title, post_content, post_date, post_id ))
+
+            connect_db.commit()
+        
+        return jsonify({"result" : 1, "post_id" : post_id})
+
+    except Exception as e :
+        print(f"[ ERROR ] Fail to Edit Post : {e}")
+
+        return jsonify({"result" : 0, "error" : "Fail to Edit Post"})
+    
+    finally :
+        connect_db.close()
+
+# API : Delete Post
+@blueprint_api.route('/api/delete_post/<int:post_id>', methods = ['DELETE'])
+def delete_post(post_id) :
+    try :
+        connect_db = open_db()
+
+        with connect_db.cursor() as cursor :
+            sql = "DELETE FROM post WHERE post_id = %s"
+            
+            cursor.execute(sql, ( post_id ))
+
+            connect_db.commit()
+
+            return jsonify({"result" : 1})
+
+    except Exception as e :
+        print(f"[ ERROR ] Fail to Delete Post : {e}")
+
+        return jsonify({"result" : 0, "error" : "Fail to Delete Post"})
     
     finally :
         connect_db.close()

@@ -129,6 +129,7 @@ function nextPage() {
     }
 }
 
+// Search
 async function searchPost() {
     const searchInput = document.querySelector(".search_input").value;
 

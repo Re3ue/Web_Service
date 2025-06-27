@@ -52,10 +52,24 @@ def post(post_id) :
 
 # Authenticate
 
+# Create Post
 @blueprint_route.route('/create_post')
 def create_post() :
     return render_template('create_post.html')
 
-@blueprint_route.route('/edit_post')
-def edit_post() :
-    return render_template('edit_post.html')
+# Edit Post
+@blueprint_route.route('/edit_post_get/<int:post_id>')
+def edit_post(post_id) :
+    connect_db = open_db()
+
+    with connect_db.cursor() as cursor :
+        sql = "SELECT * FROM post WHERE post_id = %s"
+            
+        cursor.execute(sql, ( post_id, ))
+
+        post = cursor.fetchone() # Get Fetch One
+
+        if not post :
+            return "No Post"
+
+    return render_template('edit_post.html', post = post)

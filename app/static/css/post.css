@@ -1,3 +1,27 @@
+/* Post Edit Delete Container */
+
+.edit_delete_container {
+    max-width: 800px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+
+    margin: 1rem auto;
+    gap: 1rem;
+}
+
+.edit_button {
+    font-size: 1rem;
+}
+
+.delete_button {
+    font-size: 1rem;
+}
+
+/* Post Container */
+
 .post_container {
     max-width: 800px;
     background-color: #fff;
