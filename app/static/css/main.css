@@ -97,7 +97,10 @@
     margin: 1rem 0;
 }
 
-.all_post_element_information {}
+.all_post_element_information {
+    color: #aaa;
+    font-size: 1rem;
+}
 
 /* All Page */
 

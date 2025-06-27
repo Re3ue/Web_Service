@@ -35,6 +35,18 @@ def initialize_db() :
 
     try :
         with connect_db.cursor() as cursor :
+            # [ DB Schema ] Account Table
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS account (
+                    account_id INT AUTO_INCREMENT PRIMARY KEY,
+                    account_name TEXT NOT NULL,
+                    account_pw TEXT NOT NULL,
+                    account_date VARCHAR(20) NOT NULL
+                )
+            """)
+
+            print("[ OK ] Success to Create DB Table - Account")
+
             # [ DB Schema ] Post Table
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS post (
@@ -46,7 +58,7 @@ def initialize_db() :
                 )
             """)
 
-        print("[ OK ] Success to Create DB Table - Post")
+            print("[ OK ] Success to Create DB Table - Post")
     
     except Exception as e :
         print(f"[ ERROR ] Fail to Create DB Table - Post : {e}")

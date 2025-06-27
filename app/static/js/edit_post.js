@@ -58,4 +58,4 @@ document.addEventListener("DOMContentLoaded", async () => {
             alert("ERROR : Fail to Edit Post");
         }
     })
-})
+});

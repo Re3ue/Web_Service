@@ -7,9 +7,36 @@
 
 <!-- Main -->
 {% block content %}
+<div class="admin_container">
+    <div class="section_container" id="account_container">
+        <div class="section_title" id="account_section_title">Account List</div>
 
+        <div class="section_button_container">
+            <button class="section_button" id="account_section_button" onclick="deleteAllAccount()">Delete : All</button>
+            <button class="section_button" id="account_section_button" onclick="createAccount100()">Create : 100</button>
+        </div>
+
+        <div class="section_list" id="account_section_list">
+            data
+        </div>
+    </div>
+
+    <div class="section_container" id="post_container">
+        <div class="section_title" id="post_section_title">Post List</div>
+
+        <div class="section_button_container">
+            <button class="section_button" id="post_section_button" onclick="deleteAllPost()">Delete : All</button>
+            <button class="section_button" id="post_section_button" onclick="createPost100()">Create : 100</button>
+        </div>
+
+        <div class="section_list" id="post_section_list">
+            data
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 <!-- JS -->
 {% block js %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 {% endblock %}

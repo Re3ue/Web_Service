@@ -13,6 +13,9 @@ from server.db import initialize_db
 from server.route import blueprint_route
 from server.api import blueprint_api
 
+# Import : File - Admin
+from server.admin import blueprint_admin
+
 ########## ########## ########## ##########
 
 # Create Flask Instance
@@ -21,6 +24,9 @@ server = Flask(__name__)
 # Route ( Blueprint )
 server.register_blueprint(blueprint_route)
 server.register_blueprint(blueprint_api)
+
+# Route - Admin ( Blueprint )
+server.register_blueprint(blueprint_admin)
 
 # Run Flask Server
 if __name__ == '__main__' :

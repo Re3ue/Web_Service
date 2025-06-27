@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const deleteButtonHTML = document.querySelector(".delete_button").addEventListener("click", () => {
         deletePost(deletePostId);
     });
-})
+});
 
 // Route to Edit Post
 function routeEditPost(postId) {

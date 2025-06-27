@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Event of "Search" Button => Search Post
     const searchButtonHTML = document.querySelector(".search_button").addEventListener("click", searchPost);
-})
+});
 
 async function getAllPost() {
     try {

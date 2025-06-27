@@ -55,4 +55,4 @@ document.addEventListener("DOMContentLoaded", async () => {
             alert("ERROR : Fail to Create Post");
         }
     })
-})
+});
