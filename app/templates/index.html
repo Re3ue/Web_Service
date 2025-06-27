@@ -14,6 +14,16 @@
         <input type="text" class="search_input" placeholder="Search : Title / Content">
         <button class="search_button">Search</button>
     </div>
+    <div class="search_option_container">
+        <input type="radio" name="search_option" id="search_title" value="search_title" hidden>
+        <label for="search_title" class="search_option">Search By : Title</label>
+
+        <input type="radio" name="search_option" id="search_content" value="search_content" hidden>
+        <label for="search_content" class="search_option">Search By : Content</label>
+
+        <input type="radio" name="search_option" id="search_all" value="search_all" hidden checked>
+        <label for="search_all" class="search_option">Search By : All</label>
+    </div>
 
     <div class="all_post">
         <!-- JS : Post List -->

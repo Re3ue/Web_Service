@@ -106,23 +106,46 @@ def get_a_post(post_id) :
 @blueprint_api.route('/api/search_post', methods = ['GET'])
 def search_post() :
     search_input = request.args.get("search_input")
+    search_option = request.args.get("search_option")
 
     if not search_input :
-        return jsonify({"result" : 0, "error" : "Miss Search Input"})
-    
+        return jsonify({"result" : 0, "error" : "Miss Search Input"}) 
+       
     try :
         connect_db = open_db()
 
         with connect_db.cursor() as cursor :
-            sql = """
-                SELECT * FROM post
-                WHERE post_title LIKE %s OR post_content LIKE %s
-                ORDER BY post_id DESC
-            """
-            
             like_search_input = f"%{search_input}%"
 
-            cursor.execute(sql, ( like_search_input, like_search_input ))
+            # Search By Title
+            if search_option == "search_title" :
+                sql = """
+                    SELECT * FROM post
+                    WHERE post_title LIKE %s
+                    ORDER BY post_id DESC
+                """
+
+                cursor.execute(sql, ( like_search_input ))
+    
+            # Search By Content
+            elif search_option == "search_content" :
+                sql = """
+                    SELECT * FROM post
+                    WHERE post_content LIKE %s
+                    ORDER BY post_id DESC
+                """
+
+                cursor.execute(sql, ( like_search_input ))
+
+            # Search By All
+            else :
+                sql = """
+                    SELECT * FROM post
+                    WHERE post_title LIKE %s OR post_content LIKE %s
+                    ORDER BY post_id DESC
+                """
+        
+                cursor.execute(sql, ( like_search_input, like_search_input ))
 
             search_post = cursor.fetchall()
 

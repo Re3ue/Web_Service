@@ -132,9 +132,12 @@ function nextPage() {
 // Search
 async function searchPost() {
     const searchInput = document.querySelector(".search_input").value;
+    const searchOption = document.querySelector("input[name='search_option']:checked").value;
+
+    console.log(`[ DEBUG ] Search Option : ${searchOption}`);
 
     try {
-        const response = await fetch(`/api/search_post?search_input=${encodeURIComponent(searchInput)}`);
+        const response = await fetch(`/api/search_post?search_input=${encodeURIComponent(searchInput)}&search_option=${searchOption}`); // Request : Search Input + Search Option
         const searchPostResult = await response.json();
 
         const result = searchPostResult.result;
