@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+<!-- CSS -->
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/edit_account.css') }}">
+{% endblock %}
+
+<!-- Main -->
+{% block content %}
+<div class="profile_container">
+    <div class="profile_account_image">
+        <img src="" alt="Profile Account Image">
+    </div>
+
+    <form action="" class="profile_account_container">
+        <input type="text" class="profile_account_name" placeholder="Account Name" value="{{ account.account_name }}" required>
+        <input type="text" class="profile_account_password" placeholder="Account Password" value="{{ account.account_password}}" required>
+        <button type="submit" class="profile_account_button" data-account-id="{{ account.account_id }}">Edit</button>
+    </form>
+</div>
+{% endblock %}
+
+<!-- JS -->
+{% block js %}
+<script src="{{ url_for('static', filename='js/edit_account.js') }}"></script>
+{% endblock %}

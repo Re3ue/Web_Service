@@ -27,9 +27,15 @@
                 </div>
             </div>
             <div class="navigate_right">
+                <div class="navigate_create_post">
+                    {% if session['account_id'] is defined %}
+                        <a href="{{ url_for('blueprint_route.create_post', account_id = session['account_id'] ) }}">Create Post</a>
+                    {% endif %}
+                </div>
+
                 <div class="navigate_profile">
                     {% if session['account_id'] is defined %}
-                        <a href="{{ url_for('blueprint_route.profile', account_id=session['account_id']) }}">Profile</a>
+                        <a href="{{ url_for('blueprint_route.profile', account_id = session['account_id']) }}">Profile</a>
                     {% endif %}
                 </div>
 

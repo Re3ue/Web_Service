@@ -4,7 +4,7 @@
 from datetime import datetime
 
 # Import : External
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 
 # Import : File
 from .db import open_db
@@ -20,7 +20,16 @@ blueprint_api_post = Blueprint('blueprint_api_post', __name__)
 # API - Post : Create Post
 @blueprint_api_post.route('/api/create_post', methods = ['POST'])
 def create_post() :
+    account_id = session['account_id'] # Get Account ID from Session
+
+    # Check : Sign In
+    if not account_id :
+        return jsonify({"error" : "Fail to Check - Sig In"})
+
     post_data = request.get_json() # Get Post Data
+
+    post_account_id = account_id
+    post_account_name = ""
 
     post_title = post_data.get('title')
     post_content = post_data.get('content')
@@ -37,9 +46,9 @@ def create_post() :
         connect_db = open_db()
 
         with connect_db.cursor() as cursor :
-            sql = "INSERT INTO post (post_title, post_content, post_create_date, post_edit_date) VALUES (%s, %s, %s, %s)"
+            sql = "INSERT INTO post (post_account_id, post_title, post_content, post_create_date, post_edit_date) VALUES (%s, %s, %s, %s, %s)"
             
-            cursor.execute(sql, ( post_title, post_content, post_create_date, post_edit_date ))
+            cursor.execute(sql, ( post_account_id, post_title, post_content, post_create_date, post_edit_date ))
 
             connect_db.commit()
 

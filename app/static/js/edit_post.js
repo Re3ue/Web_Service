@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const editPostResult = await response.json();
 
             const result = editPostResult.result; // Get Result ( 1 : Success / 0 : Fail )
-            const post_id = editPostResult.post_id; // Get Post ID
+            const postId = editPostResult.post_id; // Get Post ID
             const error = editPostResult.error; // Get Error
 
             if (result === 0) {
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             alert("OK : Success to Edit Post");
 
-            window.location.href = `/post/${post_id}`; // Redirect with Post ID
+            window.location.href = `/post/${postId}`; // Redirect with Post ID
         } catch (e) {
             console.error(`Fail to Edit Post : ${e}`);
 

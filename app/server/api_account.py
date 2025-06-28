@@ -113,8 +113,70 @@ def create_account() :
         connect_db.close()
     
 # API - Account : Edit Account
+@blueprint_api_account.route('/api/edit_account_post/<int:account_id>', methods = ['POST'])
+def edit_account(account_id) :
+    account_data = request.get_json() # Get Account Data
+
+    account_name = account_data.get('name')
+    account_password = account_data.get('password')
+
+    account_edit_date = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    # Check : Require
+    if (not account_name) or (not account_password) :
+        return jsonify({"error" : "Miss Require Fields"})
+    
+    # SQL Query : Insert to Account Table
+    try :
+        connect_db = open_db()
+
+        with connect_db.cursor() as cursor :
+            sql = """
+                UPDATE account
+                SET account_name = %s,
+                    account_password = %s,
+                    account_edit_date = %s
+                WHERE account_id = %s
+            """
+
+            cursor.execute(sql, ( account_name, account_password, account_edit_date, account_id ))
+
+            connect_db.commit()
+
+        return jsonify({"result" : 1, "account_id" : account_id})
+    
+    except Exception as e :
+        print(f"[ ERROR ] Fail to Edit Account : {e}")
+
+        return jsonify({"result" : 0, "error" : "Fail to Edit Account"})
+    
+    finally :
+        connect_db.close()
 
 # API - Account : Delete Account
+@blueprint_api_account.route('/api/delete_account/<int:account_id>', methods = ['DELETE'])
+def delete_account(account_id) :
+    try :
+        connect_db = open_db()
+
+        with connect_db.cursor() as cursor :
+            sql = "DELETE FROM account WHERE account_id = %s"
+
+            cursor.execute(sql, ( account_id ))
+
+            connect_db.commit()
+
+            session.pop("account_id", None) # Delete Session - "account_id"
+
+            return jsonify({"result" : 1})
+
+    except Exception as e :
+        print(f"[ ERROR ] Fail to Delete Account : {e}")
+
+        return jsonify({"result" : 0, "error" : "Fail to Delete Account"})
+    
+    finally :
+        connect_db.close()
 
 ########## ########## ########## ##########
 # API - Account : Get All / Get A / Search

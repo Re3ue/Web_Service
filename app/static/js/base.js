@@ -1,8 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const navigateSignOutHTML = document.querySelector(".navigate_sign_out");
-    const navigateSignInHTML = document.querySelector(".navigate_sign_in");
 
-    // Can : Sign Out
+    // Sign Out
     if (navigateSignOutHTML) {
         navigateSignOutHTML.addEventListener("click", async (event) => {
             event.preventDefault();

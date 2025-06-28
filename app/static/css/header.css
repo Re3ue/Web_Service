@@ -15,6 +15,7 @@ header {
     justify-content: space-between;
     align-items: center;
 }
+
 .navigate_container a {
     text-decoration: none;
 
@@ -30,6 +31,7 @@ header {
     flex-direction: row;
     gap: 1rem;
 }
+
 .navigate_main {}
 
 .navigate_about {}
@@ -39,6 +41,9 @@ header {
     flex-direction: row;
     gap: 1rem;
 }
+
+.navigate_create_post {}
+
 .navigate_profile {}
 
 .navigate_sign {}

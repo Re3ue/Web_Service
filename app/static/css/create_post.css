@@ -10,8 +10,12 @@
 
 .post_title {
     font-size: 2rem;
+}
 
-    margin-bottom: 1rem;
+.post_account_name {
+    font-size: 1.25rem;
+
+    margin: 1rem 0;
 }
 
 .post_form {

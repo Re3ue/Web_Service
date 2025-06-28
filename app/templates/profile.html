@@ -8,14 +8,27 @@
 <!-- Main -->
 {% block content %}
 <div class="profile_container">
-    <div class="profile_image">
-        <img src="" alt="Profile Image">
+    <div class="profile_account_image">
+        <img src="" alt="Profile Account Image">
     </div>
-    <div class="profile_id">ID</div>
-    <!-- <div class="profile_password">Password</div> -->
+
+    <div class="profile_account_container">
+        <div class="profile_account_name">Name : {{ account.account_name }}</div>
+        <div class="profile_account_password">Password : {{ account.account_password }}</div>
+        <div class="profile_account_information">
+            <div class="profile_account_create_date">Create Date : {{ account.account_create_date }}</div>
+            <div class="profile_account_edit_date">Edit Date : {{ account.account_edit_date }}</div>
+        </div>
+    </div>
+
+    <div class="edit_delete_container">
+        <button class="edit_button" data-account-id="{{ account.account_id }}">Edit</button>
+        <button class="delete_button" data-account-id="{{ account.account_id }}">Delete</button>
+    </div>
 </div>
 {% endblock %}
 
 <!-- JS -->
 {% block js %}
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
 {% endblock %}
