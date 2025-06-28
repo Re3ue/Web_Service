@@ -7,11 +7,13 @@ import time
 # Import : External
 from flask import Flask
 import pymysql
+from dotenv import load_dotenv
 
 # Import : File
 from server.db import initialize_db
 from server.route import blueprint_route
-from server.api import blueprint_api
+from server.api_post import blueprint_api_post
+from server.api_account import blueprint_api_account
 
 # Import : File - Admin
 from server.admin import blueprint_admin
@@ -21,9 +23,16 @@ from server.admin import blueprint_admin
 # Create Flask Instance
 server = Flask(__name__)
 
+# Load ".env" File
+load_dotenv()
+
+# Set Secret Key
+server.secret_key = os.getenv("SECRET_KEY")
+
 # Route ( Blueprint )
 server.register_blueprint(blueprint_route)
-server.register_blueprint(blueprint_api)
+server.register_blueprint(blueprint_api_post)
+server.register_blueprint(blueprint_api_account)
 
 # Route - Admin ( Blueprint )
 server.register_blueprint(blueprint_admin)

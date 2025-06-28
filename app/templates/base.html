@@ -28,11 +28,17 @@
             </div>
             <div class="navigate_right">
                 <div class="navigate_profile">
-                    <a href="{{ url_for('blueprint_route.profile') }}">Profile</a>
+                    {% if session['account_id'] is defined %}
+                        <a href="{{ url_for('blueprint_route.profile', account_id=session['account_id']) }}">Profile</a>
+                    {% endif %}
                 </div>
 
                 <div class="navigate_sign">
-                    <a href="{{ url_for('blueprint_route.sign_in') }}">Sign In</a>
+                    {% if session['account_id'] is defined %}
+                        <a class="navigate_sign_out" href="{{ url_for('blueprint_route.main') }}">Sign Out</a>
+                    {% else %}
+                        <a class="navigate_sign_in" href="{{ url_for('blueprint_route.sign_in') }}">Sign In</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -49,6 +55,8 @@
     <footer>
         <div>2025</div>
     </footer>
+
+    <script src="{{ url_for('static', filename='js/base.js') }}"></script>
 
     {% block js %}
     {% endblock %}

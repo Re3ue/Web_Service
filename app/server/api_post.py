@@ -11,14 +11,14 @@ from .db import open_db
 
 ########## ########## ########## ##########
 
-blueprint_api = Blueprint('blueprint_api', __name__)
+blueprint_api_post = Blueprint('blueprint_api_post', __name__)
 
 ########## ########## ########## ##########
 # API - Post : Create / Edit / Delete
 ########## ########## ########## ##########
 
-# API : Create Post
-@blueprint_api.route('/api/create_post', methods = ['POST'])
+# API - Post : Create Post
+@blueprint_api_post.route('/api/create_post', methods = ['POST'])
 def create_post() :
     post_data = request.get_json() # Get Post Data
 
@@ -55,8 +55,8 @@ def create_post() :
     finally :
         connect_db.close()
 
-# API : Edit Post
-@blueprint_api.route('/api/edit_post_post/<int:post_id>', methods = ['POST'])
+# API - Post : Edit Post
+@blueprint_api_post.route('/api/edit_post_post/<int:post_id>', methods = ['POST'])
 def edit_post_post(post_id) :
     post_data = request.get_json() # Get Post Data
 
@@ -96,8 +96,8 @@ def edit_post_post(post_id) :
     finally :
         connect_db.close()
 
-# API : Delete Post
-@blueprint_api.route('/api/delete_post/<int:post_id>', methods = ['DELETE'])
+# API - Post : Delete Post
+@blueprint_api_post.route('/api/delete_post/<int:post_id>', methods = ['DELETE'])
 def delete_post(post_id) :
     try :
         connect_db = open_db()
@@ -123,8 +123,8 @@ def delete_post(post_id) :
 # API - Post : Get All / Get A / Search
 ########## ########## ########## ##########
 
-# API : Get All Post
-@blueprint_api.route('/api/get_all_post', methods = ['GET'])
+# API - Post : Get All Post
+@blueprint_api_post.route('/api/get_all_post', methods = ['GET'])
 def get_all_post() :
     # SQL Query : Get All Post from Post Table
     try :
@@ -150,8 +150,8 @@ def get_all_post() :
     finally :
         connect_db.close()
 
-# API : Get A Post
-@blueprint_api.route('/api/get_a_post', methods = ['GET'])
+# API - Post : Get A Post
+@blueprint_api_post.route('/api/get_a_post', methods = ['GET'])
 def get_a_post(post_id) :
     # SQL Query : Get A Post from Post Table
     try :
@@ -177,8 +177,8 @@ def get_a_post(post_id) :
     finally :
         connect_db.close()
 
-# API : Search Post
-@blueprint_api.route('/api/search_post', methods = ['GET'])
+# API - Post : Search Post
+@blueprint_api_post.route('/api/search_post', methods = ['GET'])
 def search_post() :
     search_input = request.args.get("search_input")
     search_option = request.args.get("search_option")

@@ -40,7 +40,7 @@ def initialize_db() :
                 CREATE TABLE IF NOT EXISTS account (
                     account_id INT AUTO_INCREMENT PRIMARY KEY,
                     account_name TEXT NOT NULL,
-                    account_pw TEXT NOT NULL,
+                    account_password TEXT NOT NULL,
                     account_create_date VARCHAR(20) NOT NULL,
                     account_edit_date VARCHAR(20) NOT NULL
                 )

@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Check : Require
         if (!title || !content) {
-            alert("Require : All Fields ( Title / Content");
+            alert("Require : All Fields ( Title / Content )");
 
             return;
         }
@@ -48,9 +48,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             window.location.href = `/post/${post_id}`; // Redirect with Post ID
         } catch (e) {
-            console.error(`Fail to Create Post : {e}`);
+            console.error(`Fail to Create Post : ${e}`);
 
             alert("ERROR : Fail to Create Post");
         }
-    })
+    });
 });
