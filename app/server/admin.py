@@ -22,7 +22,7 @@ def admin() :
 ## Admin - Account API
 ########## ########## ########## ########## 
 
-# Admin - Account API : Get
+# Admin - Account API : Get All
 @blueprint_admin.route('/admin_api/get_all_account', methods = ['GET'])
 def get_all_account() :
     # SQL Query : Get All Account from Account Table
@@ -106,15 +106,16 @@ def create_account_100() :
         with connect_db.cursor() as cursor :
             for i in range(100) :
                 sql = """
-                    INSERT INTO account (account_name, account_pw, account_date)
-                    VALUES (%s, %s, %s)
+                    INSERT INTO account (account_name, account_pw, account_create_date, account_edit_date)
+                    VALUES (%s, %s, %s, %s)
                 """
 
                 account_name = f"test_{i}"
                 account_pw = f"pw_{i}"
-                account_date = datetime.now().strftime("%Y-%m-%d %H:%M")
+                account_create_date = datetime.now().strftime("%Y-%m-%d %H:%M")
+                account_edit_date = ""
 
-                cursor.execute(sql, ( account_name, account_pw, account_date ))
+                cursor.execute(sql, ( account_name, account_pw, account_create_date, account_edit_date ))
 
             connect_db.commit()
 
@@ -132,7 +133,7 @@ def create_account_100() :
 ## Admin - Post API
 ########## ########## ########## ########## 
 
-# Admin - Post API : Get
+# Admin - Post API : Get All
 @blueprint_admin.route('/admin_api/get_all_post', methods = ['GET'])
 def get_all_post() :
     # SQL Query : Get All Post from Post Table
@@ -216,15 +217,16 @@ def create_post_100() :
         with connect_db.cursor() as cursor :
             for i in range(100) :
                 sql = """
-                    INSERT INTO post (post_title, post_content, post_date)
-                    VALUES (%s, %s, %s)
+                    INSERT INTO post (post_title, post_content, post_create_date, post_edit_date)
+                    VALUES (%s, %s, %s, %s)
                 """
 
                 post_title = f"TEST #{i}"
                 post_content = f"CONTENT #{i}"
-                post_date = datetime.now().strftime("%Y-%m-%d %H:%M")
+                post_create_date = datetime.now().strftime("%Y-%m-%d %H:%M")
+                post_edit_date = ""
 
-                cursor.execute(sql, ( post_title, post_content, post_date ))
+                cursor.execute(sql, ( post_title, post_content, post_create_date, post_edit_date ))
 
             connect_db.commit()
 

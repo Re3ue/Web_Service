@@ -41,7 +41,8 @@ def initialize_db() :
                     account_id INT AUTO_INCREMENT PRIMARY KEY,
                     account_name TEXT NOT NULL,
                     account_pw TEXT NOT NULL,
-                    account_date VARCHAR(20) NOT NULL
+                    account_create_date VARCHAR(20) NOT NULL,
+                    account_edit_date VARCHAR(20) NOT NULL
                 )
             """)
 
@@ -53,7 +54,8 @@ def initialize_db() :
                     post_id INT AUTO_INCREMENT PRIMARY KEY,
                     post_title VARCHAR(255) NOT NULL,
                     post_content TEXT NOT NULL,
-                    post_date VARCHAR(20) NOT NULL,
+                    post_create_date VARCHAR(20) NOT NULL,
+                    post_edit_date VARCHAR(20) NOT NULL,
                     post_upvote INT DEFAULT 0
                 )
             """)

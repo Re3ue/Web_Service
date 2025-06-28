@@ -50,8 +50,6 @@ def post(post_id) :
 
     return render_template('post.html', post = post)
 
-# Authenticate
-
 # Create Post
 @blueprint_route.route('/create_post')
 def create_post() :
@@ -73,3 +71,5 @@ def edit_post(post_id) :
             return "No Post"
 
     return render_template('edit_post.html', post = post)
+
+# Authenticate

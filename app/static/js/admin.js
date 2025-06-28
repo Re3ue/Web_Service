@@ -72,7 +72,10 @@ function renderAllAccount() {
             <div class="all_element_id">${escapeHTML(accountElement.account_id.toString())}</div>
             <div class="all_element_title">${escapeHTML(accountElement.account_name)}</div>
             <div class="all_element_content">${escapeHTML(accountElement.account_pw)}</div>
-            <div class="all_element_information">Date : ${escapeHTML(accountElement.post_date)}</div>
+            <div class="all_element_information">
+                <div class="all_element_information_create_date">Create Date : ${escapeHTML(accountElement.account_create_date)}</div>
+                <div class="all_element_information_edit_date">Edit Date : ${escapeHTML(accountElement.account_edit_date)}</div>
+            </div>
             <button class="all_element_button" onclick="deleteAccount(${accountElement.account_id})">Delete</button>
         `;
 
@@ -210,7 +213,11 @@ function renderAllPost() {
             <div class="all_element_id">${escapeHTML(postElement.post_id.toString())}</div>
             <div class="all_element_title">${escapeHTML(postElement.post_title)}</div>
             <div class="all_element_content">${escapeHTML(postElement.post_content)}</div>
-            <div class="all_element_information">Date : ${escapeHTML(postElement.post_date)} | Up Vote : ${postElement.post_upvote}</div>
+            <div class="all_element_information">
+                <div class="all_element_information_create_date">Create Date : ${escapeHTML(postElement.post_create_date)}</div>
+                <div class="all_element_information_edit_date">Edit Date : ${escapeHTML(postElement.post_edit_date)}</div>
+                <div class="all_element_information_upvote">Up Vote : ${escapeHTML(postElement.post_upvote)}</div>
+            </div>
             <button class="all_element_button" onclick="deletePost(${postElement.post_id})">Delete</button>
         `;
 
