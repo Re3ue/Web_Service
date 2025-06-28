@@ -110,4 +110,25 @@ main {
 .all_element_information {
     color: #aaa;
     font-size: 1rem;
+
+    margin: 1rem 0;
+}
+
+.all_element_button {
+    color: #fff;
+    font-size: 0.75rem;
+
+    padding: 0.5rem 1rem;
+
+    background-color: #0077ff;
+
+    border: none;
+    border-radius: 0.5rem;
+
+    cursor: pointer;
+
+    transition: background-color 0.5s;
+}
+.all_element_button:hover {
+    background-color: #0055bb;
 }

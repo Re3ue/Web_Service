@@ -49,7 +49,7 @@ def get_all_account() :
     finally :
         connect_db.close()
 
-# Admin - Account API : Delete
+# Admin - Account API : Delete All
 @blueprint_admin.route('/admin_api/delete_all_account', methods = ['DELETE'])
 def delete_all_account() :
     # SQL Query : Delete All Data from Account Table
@@ -69,6 +69,30 @@ def delete_all_account() :
         print(f"[ ERROR ] Fail to Delete All Account : {e}")
 
         return jsonify({"result" : 0, "error" : "Fail to Delete All Account"})
+    
+    finally :
+        connect_db.close()
+
+# Admin - Account API : Delete
+@blueprint_admin.route('/admin_api/delete_account/<int:account_id>', methods = ['DELETE'])
+def delete_account(account_id) :
+    # SQL Query : Delete Account Data from Account Table
+    try :
+        connect_db = open_db()
+
+        with connect_db.cursor() as cursor :
+            sql = "DELETE FROM account WHERE account_id = %s"
+
+            cursor.execute(sql, ( account_id, ))
+
+            connect_db.commit()
+
+        return jsonify({"result" : 1})
+    
+    except Exception as e :
+        print(f"[ ERROR ] Fail to Delete Account : {e}")
+
+        return jsonify({"result" : 0, "error" : "Fail to Delete Account"})
     
     finally :
         connect_db.close()
@@ -135,7 +159,7 @@ def get_all_post() :
     finally :
         connect_db.close()
 
-# Admin - Post API : Delete
+# Admin - Post API : Delete All
 @blueprint_admin.route('/admin_api/delete_all_post', methods = ['DELETE'])
 def delete_all_post() :
     # SQL Query : Delete All Data from Post Table
@@ -155,6 +179,30 @@ def delete_all_post() :
         print(f"[ ERROR ] Fail to Delete All Post : {e}")
 
         return jsonify({"result" : 0, "error" : "Fail to Delete All Post"})
+    
+    finally :
+        connect_db.close()
+
+# Admin - Post API : Delete
+@blueprint_admin.route('/admin_api/delete_post/<int:post_id>', methods = ['DELETE'])
+def delete_post(post_id) :
+    # SQL Query : Delete Post Data from Post Table
+    try :
+        connect_db = open_db()
+
+        with connect_db.cursor() as cursor :
+            sql = "DELETE FROM post WHERE post_id = %s"
+
+            cursor.execute(sql, ( post_id, ))
+
+            connect_db.commit()
+
+        return jsonify({"result" : 1})
+    
+    except Exception as e :
+        print(f"[ ERROR ] Fail to Delete Post : {e}")
+
+        return jsonify({"result" : 0, "error" : "Fail to Delete Post"})
     
     finally :
         connect_db.close()

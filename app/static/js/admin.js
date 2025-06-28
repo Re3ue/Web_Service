@@ -73,23 +73,24 @@ function renderAllAccount() {
             <div class="all_element_title">${escapeHTML(accountElement.account_name)}</div>
             <div class="all_element_content">${escapeHTML(accountElement.account_pw)}</div>
             <div class="all_element_information">Date : ${escapeHTML(accountElement.post_date)}</div>
+            <button class="all_element_button" onclick="deleteAccount(${accountElement.account_id})">Delete</button>
         `;
 
         accountListHTML.appendChild(div);
     });
 }
 
-// Account - Delete
+// Account - Delete All
 async function deleteAllAccount() {
     try {
         const response = await fetch("/admin_api/delete_all_account", {
             method: "DELETE",
         });
 
-        const deleteAccountResult = await response.json();
+        const deleteAllAccountResult = await response.json();
 
-        const result = deleteAccountResult.result;
-        const error = deleteAccountResult.error;
+        const result = deleteAllAccountResult.result;
+        const error = deleteAllAccountResult.error;
 
         if (result === 0) {
             alert(`Admin - Fail to Delete All Account : ${error}`);
@@ -102,6 +103,32 @@ async function deleteAllAccount() {
         getAllAccount();
     } catch (e) {
         console.error(`Admin - Fail to Delete All Account : ${e}`);
+    }
+}
+
+// Account - Delete
+async function deleteAccount(accountId) {
+    try {
+        const response = await fetch(`/admin_api/delete_account/${accountId}`, {
+            method: "DELETE",
+        });
+
+        const deleteAccountResult = await response.json();
+
+        const result = deleteAccountResult.result;
+        const error = deleteAccountResult.error;
+
+        if (result === 0) {
+            alert(`Admin - Fail to Delete Account : ${error}`);
+
+            return;
+        }
+
+        console.log(`[ DEBUG ] Delete Account ( ${accountId} ) : Success`);
+
+        getAllAccount();
+    } catch (e) {
+        console.error(`Admin - Fail to Delete Account ( ${account_id} ) : ${e}`);
     }
 }
 
@@ -184,13 +211,14 @@ function renderAllPost() {
             <div class="all_element_title">${escapeHTML(postElement.post_title)}</div>
             <div class="all_element_content">${escapeHTML(postElement.post_content)}</div>
             <div class="all_element_information">Date : ${escapeHTML(postElement.post_date)} | Up Vote : ${postElement.post_upvote}</div>
+            <button class="all_element_button" onclick="deletePost(${postElement.post_id})">Delete</button>
         `;
 
         postListHTML.appendChild(div);
     });
 }
 
-// Post - Delete
+// Post - Delete All
 async function deleteAllPost() {
     try {
         const response = await fetch("/admin_api/delete_all_post", {
@@ -213,6 +241,32 @@ async function deleteAllPost() {
         getAllPost();
     } catch (e) {
         console.error(`Admin - Fail to Delete All Post : ${e}`);
+    }
+}
+
+// Post - Delete
+async function deletePost(postId) {
+    try {
+        const response = await fetch(`/admin_api/delete_post/${postId}`, {
+            method: "DELETE",
+        });
+
+        const deletePostResult = await response.json();
+
+        const result = deletePostResult.result;
+        const error = deletePostResult.error;
+
+        if (result === 0) {
+            alert(`Admin - Fail to Delete Post : ${error}`);
+
+            return;
+        }
+
+        console.log(`[ DEBUG ] Delete Post ( ${postId} ) : Success`);
+
+        getAllPost();
+    } catch (e) {
+        console.error(`Admin - Fail to Delete Post ( ${postId} ) : ${e}`);
     }
 }
 
