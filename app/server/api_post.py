@@ -24,12 +24,33 @@ def create_post() :
 
     # Check : Sign In
     if not account_id :
-        return jsonify({"error" : "Fail to Check - Sig In"})
+        return jsonify({"error" : "Fail to Check - Sign In"})
 
     post_data = request.get_json() # Get Post Data
 
     post_account_id = account_id
     post_account_name = ""
+
+    # SQL Query : Get from Account Table
+    try :
+        connect_db = open_db()
+
+        with connect_db.cursor() as cursor :
+            sql = "SELECT * FROM account WHERE account_id = %s"
+            
+            cursor.execute(sql, ( account_id, ))
+
+            post_account = cursor.fetchone() # Get A Post Account
+
+            post_account_name = post_account['account_name']
+        
+    except Exception as e :
+        print(f"[ ERROR ] Fail to Get Post Account : {e}")
+
+        return jsonify({"result" : 0, "error" : "Fail to Get Post Account"})
+    
+    finally :
+        connect_db.close()
 
     post_title = post_data.get('title')
     post_content = post_data.get('content')
@@ -46,9 +67,9 @@ def create_post() :
         connect_db = open_db()
 
         with connect_db.cursor() as cursor :
-            sql = "INSERT INTO post (post_account_id, post_title, post_content, post_create_date, post_edit_date) VALUES (%s, %s, %s, %s, %s)"
+            sql = "INSERT INTO post (post_account_id, post_account_name, post_title, post_content, post_create_date, post_edit_date) VALUES (%s, %s, %s, %s, %s, %s)"
             
-            cursor.execute(sql, ( post_account_id, post_title, post_content, post_create_date, post_edit_date ))
+            cursor.execute(sql, ( post_account_id, post_account_name, post_title, post_content, post_create_date, post_edit_date ))
 
             connect_db.commit()
 

@@ -35,8 +35,20 @@
 
 .post_title {
     font-size: 2rem;
+}
 
-    margin-bottom: 1rem;
+.post_account {
+    margin: 1rem 0;
+}
+
+.post_account a {
+    color: #000;
+    font-size: 1.25rem;
+
+    text-decoration: none;
+}
+.post_account:hover {
+    text-decoration: underline;
 }
 
 .post_content {

@@ -39,19 +39,41 @@ def initialize_db() :
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS account (
                     account_id INT AUTO_INCREMENT PRIMARY KEY,
-                    account_name TEXT NOT NULL,
-                    account_password TEXT NOT NULL,
+                           
+                    account_name VARCHAR(20) NOT NULL,
+                    account_password VARCHAR(20) NOT NULL,
                     account_create_date VARCHAR(20) NOT NULL,
                     account_edit_date VARCHAR(20) NOT NULL
                 )
             """)
+
+            # Check - Empty : Account Table
+            cursor.execute("SELECT COUNT(*) AS account_count FROM account")
+
+            account_count = cursor.fetchone()['account_count']
+
+            # Create Admin Account : "admin_1" ~ "admin_9"
+            if (account_count == 0) :
+                for i in range(1, 10, 1):
+                    sql = "INSERT INTO account (account_name, account_password, account_create_date, account_edit_date) VALUES (%s, %s, %s, %s)"
+                    
+                    cursor.execute(sql, (f"admin_{i}", f"admin_{i}", "", ""))
+
+                print("[ Table : Account ] Not Exist : Admin Accounts => Create : admin_0 ~ admin_9")
+            
+            else :
+                print("[ Table : Account ] Exist : Admin Account => Not Create : Admin Account")
 
             print("[ OK ] Success to Create DB Table - Account")
 
             # [ DB Schema ] Post Table
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS post (
+                    post_account_id INT NOT NULL,
+                    post_account_name VARCHAR(20) NOT NULL,
+                           
                     post_id INT AUTO_INCREMENT PRIMARY KEY,
+                           
                     post_title VARCHAR(255) NOT NULL,
                     post_content TEXT NOT NULL,
                     post_create_date VARCHAR(20) NOT NULL,
