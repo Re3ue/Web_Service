@@ -8,6 +8,7 @@ from flask import Blueprint, request, jsonify, session
 
 # Import : File
 from .db import open_db
+from .authenticate import authenticate_sign_in_sign_out, authenticate_session_account_target_account, authenticate_session_account_post_account
 
 ########## ########## ########## ##########
 
@@ -129,25 +130,35 @@ def edit_post_post(post_id) :
 # API - Post : Delete Post
 @blueprint_api_post.route('/api/delete_post/<int:post_id>', methods = ['DELETE'])
 def delete_post(post_id) :
-    try :
-        connect_db = open_db()
+    authenticate_result = False
 
-        with connect_db.cursor() as cursor :
-            sql = "DELETE FROM post WHERE post_id = %s"
-            
-            cursor.execute(sql, ( post_id ))
+    authenticate_result = authenticate_session_account_post_account(post_id)
 
-            connect_db.commit()
+    # Authenticate - Success
+    if authenticate_result :
+        try :
+            connect_db = open_db()
 
-            return jsonify({"result" : 1})
+            with connect_db.cursor() as cursor :
+                sql = "DELETE FROM post WHERE post_id = %s"
+                
+                cursor.execute(sql, ( post_id ))
 
-    except Exception as e :
-        print(f"[ ERROR ] Fail to Delete Post : {e}")
+                connect_db.commit()
 
-        return jsonify({"result" : 0, "error" : "Fail to Delete Post"})
-    
-    finally :
-        connect_db.close()
+                return jsonify({"result" : 1})
+
+        except Exception as e :
+            print(f"[ ERROR ] Fail to Delete Post : {e}")
+
+            return jsonify({"result" : 0, "error" : "Fail to Delete Post"})
+        
+        finally :
+            connect_db.close()
+
+    # Authenticate - Success
+    else :
+        return jsonify({"result" : 0, "error" : "Fail to Authenticate"})
 
 ########## ########## ########## ##########
 # API - Post : Get All / Get A / Search

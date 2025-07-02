@@ -157,8 +157,36 @@ def edit_account(account_id) :
 @blueprint_api_account.route('/api/delete_account/<int:account_id>', methods = ['DELETE'])
 def delete_account(account_id) :
     try :
+        session_account_id = session['account_id'] # Get Account ID from Session
+
         connect_db = open_db()
 
+        # Check #1
+        with connect_db.cursor() as cursor :
+            sql = "SELECT * FROM account WHERE account_id = %s"
+
+            cursor.execute(sql, ( session_account_id, ))
+
+            account = cursor.fetchone() # Get Fetch One
+
+            if not account :
+                return jsonify({"result" : 0, "error" : "Fail to Delete Account"}) # Not Valid Access
+
+        # Check #2
+        with connect_db.cursor() as cursor :
+            sql = "SELECT * FROM account WHERE account_id = %s"
+                
+            cursor.execute(sql, ( account_id, ))
+
+            account = cursor.fetchone() # Get Fetch One
+
+            if not account :
+                return jsonify({"result" : 0, "error" : "Fail to Delete Account"}) # Not Valid Access
+            
+            if session_account_id != account['account_id'] :
+                return jsonify({"result" : 0, "error" : "Fail to Delete Account"}) # Not Valid Access
+
+        # Do
         with connect_db.cursor() as cursor :
             sql = "DELETE FROM account WHERE account_id = %s"
 
