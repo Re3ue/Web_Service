@@ -10,17 +10,34 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function signUp() {
     const signUpFormNameHTML = document.querySelector(".sign_up_form_name");
-    const signUpFormPasswordHTML = document.querySelector(".sign_up_form_password");        
+    const signUpFormPasswordHTML = document.querySelector(".sign_up_form_password");
+    const signUpFormDisplayNameHTML = document.querySelector(".sign_up_form_display_name");
+    
+    const signUpFormBirthHTML = document.querySelector(".sign_up_form_birth");   
+    const signUpFormCountryHTML = document.querySelector(".sign_up_form_country");   
 
     const name = signUpFormNameHTML.value;
     const password = signUpFormPasswordHTML.value;
+    const displayName = signUpFormDisplayNameHTML.value;
+
+    const country = signUpFormCountryHTML.value;
+    const birth = signUpFormBirthHTML.value;
 
     // Check : Require
-    if (!name || !password) {
-        alert("Require : All Fields ( Name / Password )");
+    if (!name || !password || !displayName) {
+        alert("Require : All Fields ( Name / Password / Display Name )");
 
         return;
     }
+
+    const body = {
+        name,
+        password,
+        displayName
+    };
+
+    if (birth) body.birth = birth;
+    if (country) body.country = country;
 
     // Request : Create Account to Server
     try {
@@ -29,7 +46,7 @@ async function signUp() {
             headers : {
                 "Content-Type" : "application/json", // Flask : Request with JSON
             },
-            body : JSON.stringify({name, password}),
+            body : JSON.stringify(body),
         });
 
         // Check : Response (Create Account to Server)

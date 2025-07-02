@@ -9,12 +9,22 @@
 {% block content %}
 <div class="profile_container">
     <div class="profile_account_image">
-        <img src="" alt="Profile Account Image">
+        <label class="profile_account_image_wrap" for="image_file">
+            <img class="profile_account_image_view" id="image_view" src="{{ account.account_image }}">
+            <div class="profile_account_image_change">Change</div>
+        </label>
     </div>
 
     <form action="" class="profile_account_container">
+        <input type="file" class="profile_account_image_file" id="image_file" accept="image/*">
+
         <input type="text" class="profile_account_name" placeholder="Account Name" value="{{ account.account_name }}" required>
         <input type="text" class="profile_account_password" placeholder="Account Password" value="{{ account.account_password}}" required>
+        <input type="text" class="profile_account_display_name" placeholder="Display Name" value="{{ account.account_display_name }}" required>
+
+        <input type="date" class="profile_account_birth" placeholder="Account Birth">
+        <input type="text" class="profile_account_country" placeholder="Account Country">
+
         <button type="submit" class="profile_account_button" data-account-id="{{ account.account_id }}">Edit</button>
     </form>
 </div>

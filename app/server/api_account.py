@@ -2,6 +2,7 @@
 
 # Import : Internal
 from datetime import datetime
+import os
 
 # Import : External
 from flask import Blueprint, request, jsonify, session
@@ -79,12 +80,18 @@ def create_account() :
 
     account_name = account_data.get('name')
     account_password = account_data.get('password')
+    account_display_name = account_data.get('displayName')
+    
+    account_country = account_data.get('country')
+    account_birth = account_data.get('birth')
+
+    account_image = "/static/image/image_account/account_default.avif" 
 
     account_create_date = datetime.now().strftime("%Y-%m-%d %H:%M")
-    account_edit_date = ""
+    account_edit_date = account_create_date
 
     # Check : Require
-    if (not account_name) or (not account_password) :
+    if (not account_name) or (not account_password) or (not account_display_name) :
         return jsonify({"error" : "Miss Require Fields"})
     
     # SQL Query : Insert to Account Table
@@ -92,9 +99,16 @@ def create_account() :
         connect_db = open_db()
 
         with connect_db.cursor() as cursor :
-            sql = "INSERT INTO account (account_name, account_password, account_create_date, account_edit_date) VALUES (%s, %s, %s, %s)"
+            sql = """
+            INSERT INTO account (
+                account_name, account_password, account_display_name,
+                account_country, account_birth,
+                account_image,
+                account_create_date, account_edit_date
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """
 
-            cursor.execute(sql, ( account_name, account_password, account_create_date, account_edit_date ))
+            cursor.execute(sql, ( account_name, account_password, account_display_name, account_country, account_birth, account_image, account_create_date, account_edit_date ))
 
             connect_db.commit()
 
@@ -115,31 +129,78 @@ def create_account() :
 # API - Account : Edit Account
 @blueprint_api_account.route('/api/edit_account_post/<int:account_id>', methods = ['POST'])
 def edit_account(account_id) :
-    account_data = request.get_json() # Get Account Data
+    account_form_data = request.form # Get Account Form Data
 
-    account_name = account_data.get('name')
-    account_password = account_data.get('password')
+    account_name = account_form_data.get('name')
+    account_password = account_form_data.get('password')
+    account_display_name = account_form_data.get('displayName')
+    account_birth = account_form_data.get('birth') or None
+    account_country = account_form_data.get('country') or None
+    account_image = request.files.get('image') or None # Get - with "request.files.get()" : O / with "account_form_data.get()" : X
 
-    account_edit_date = datetime.now().strftime("%Y-%m-%d %H:%M")
+    print(f"[ DEBUG ] \"account_image\" : {account_image}", flush = True)
 
     # Check : Require
-    if (not account_name) or (not account_password) :
+    if (not account_name) or (not account_password) or (not account_display_name) :
         return jsonify({"error" : "Miss Require Fields"})
-    
+
+    account_image_file_path = ""
+
+    # Save : Image File to Server
+    if (account_image) and (account_image.filename != "") :
+        filename = f"account_{account_id}_{account_image.filename}"
+
+        print(f"[ DEBUG ] \"filename\" : {filename}", flush = True)
+
+        image_account_path = os.path.join("static", "image/image_account")
+
+        os.makedirs(image_account_path, exist_ok = True) # Check - Path : Directory
+
+        image_file_save_path = os.path.join(image_account_path, filename)
+        
+        account_image.save(image_file_save_path)
+
+        account_image_file_path = f"/static/image/image_account/{filename}"
+
+        print(f"[ DEBUG ] \"account_image_file_path\" : {account_image_file_path}", flush = True)
+
+    # Save : Edit Date to DB
+    account_edit_date = datetime.now().strftime("%Y-%m-%d %H:%M")
+
     # SQL Query : Insert to Account Table
     try :
         connect_db = open_db()
 
         with connect_db.cursor() as cursor :
-            sql = """
-                UPDATE account
-                SET account_name = %s,
-                    account_password = %s,
-                    account_edit_date = %s
-                WHERE account_id = %s
-            """
-
-            cursor.execute(sql, ( account_name, account_password, account_edit_date, account_id ))
+            # Exist : Image File
+            if account_image_file_path :
+                sql = """
+                    UPDATE account
+                    SET account_name = %s,
+                        account_password = %s,
+                        account_display_name = %s,
+                        account_birth = %s,
+                        account_country = %s,
+                        account_image = %s,
+                        account_edit_date = %s
+                    WHERE account_id = %s
+                """
+            
+                cursor.execute(sql, ( account_name, account_password, account_display_name, account_birth, account_country, account_image_file_path, account_edit_date, account_id ))
+            # Not Exist : Image File
+            else :
+                sql = """
+                    UPDATE account
+                    SET account_name = %s,
+                        account_password = %s,
+                        account_display_name = %s,
+                        account_birth = %s,
+                        account_country = %s,
+                        account_edit_date = %s
+                    WHERE account_id = %s
+                """
+            
+                cursor.execute(sql, ( account_name, account_password, account_display_name, account_birth, account_country, account_edit_date, account_id ))
 
             connect_db.commit()
 

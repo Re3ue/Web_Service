@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", async () => {
     // Event of "Edit" Button => Route : Edit Account
-    const eidtAccountId = document.querySelector(".edit_button").dataset.accountId; // Get Account ID
-    console.log(`[ DEBUG ] Account ID : ${eidtAccountId}`);
+    const editAccountId = document.querySelector(".edit_button").dataset.accountId; // Get Account ID
+    console.log(`[ DEBUG ] Account ID : ${editAccountId}`);
     const editButtonHTML = document.querySelector(".edit_button").addEventListener("click", () => {
-        routeEditAccount(eidtAccountId);
+        routeEditAccount(editAccountId);
     });
     
     // Event of "Delete" Button => Route : Delete Account

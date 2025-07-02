@@ -42,6 +42,13 @@ def initialize_db() :
                            
                     account_name VARCHAR(20) NOT NULL,
                     account_password VARCHAR(20) NOT NULL,
+                    account_display_name VARCHAR(20) NOT NULL,
+                           
+                    account_birth DATE,
+                    account_country VARCHAR(50),
+                           
+                    account_image VARCHAR(255),
+                           
                     account_create_date VARCHAR(20) NOT NULL,
                     account_edit_date VARCHAR(20) NOT NULL
                 )
@@ -55,9 +62,9 @@ def initialize_db() :
             # Create Admin Account : "admin_1" ~ "admin_9"
             if (account_count == 0) :
                 for i in range(1, 10, 1):
-                    sql = "INSERT INTO account (account_name, account_password, account_create_date, account_edit_date) VALUES (%s, %s, %s, %s)"
+                    sql = "INSERT INTO account (account_name, account_password, account_display_name, account_create_date, account_edit_date) VALUES (%s, %s, %s, %s, %s)"
                     
-                    cursor.execute(sql, (f"admin_{i}", f"admin_{i}", "", ""))
+                    cursor.execute(sql, (f"admin_{i}", f"admin_{i}", f"admin_{i}", "", ""))
 
                 print("[ Table : Account ] Not Exist : Admin Accounts => Create : admin_0 ~ admin_9")
             
@@ -70,7 +77,7 @@ def initialize_db() :
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS post (
                     post_account_id INT NOT NULL,
-                    post_account_name VARCHAR(20) NOT NULL,
+                    post_account_display_name VARCHAR(20) NOT NULL,
                            
                     post_id INT AUTO_INCREMENT PRIMARY KEY,
                            
@@ -78,7 +85,9 @@ def initialize_db() :
                     post_content TEXT NOT NULL,
                     post_create_date VARCHAR(20) NOT NULL,
                     post_edit_date VARCHAR(20) NOT NULL,
-                    post_upvote INT DEFAULT 0
+                    post_upvote INT DEFAULT 0,
+                           
+                    post_file VARCHAR(20)
                 )
             """)
 

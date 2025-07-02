@@ -21,7 +21,12 @@
     flex-direction: column;
 }
 
-.sign_up_form_name {
+.sign_up_form {
+    display: flex;
+    flex-direction: column;
+}
+
+.sign_up_form input {
     font-size: 1rem;
     
     padding: 0.5rem;
@@ -30,14 +35,15 @@
     border-radius: 0.25rem;
 }
 
-.sign_up_form_password {
-    font-size: 1rem;
-    
-    padding: 0.5rem;
+.sign_up_form_name {}
 
-    border: 1px solid #aaa;
-    border-radius: 0.25rem;
-}
+.sign_up_form_password {}
+
+.sign_up_form_display_name {}
+
+.sign_up_form_birth {}
+
+.sign_up_form_country {}
 
 .sign_up_form_button {
     font-size: 1rem;
