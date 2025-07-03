@@ -27,7 +27,9 @@
     <div class="post_content">{{ post.post_content }}</div>
     <div class="post_information">
         <div class="post_create_date">Create Date : {{ post.post_create_date }}</div>
+        {% if post.post_edit_date %}
         <div class="post_edit_date">Edit Date : {{ post.post_edit_date }}</div>
+        {% endif %}
         <div class="post_upvote">Up Vote : {{ post.post_upvote }}</div>
     </div>
 </div>

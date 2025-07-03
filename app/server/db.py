@@ -42,7 +42,7 @@ def initialize_db() :
                            
                     account_name VARCHAR(20) NOT NULL UNIQUE,
                     account_display_name VARCHAR(20) NOT NULL UNIQUE,
-                    account_password VARCHAR(20) NOT NULL,
+                    account_password VARCHAR(128) NOT NULL,
                            
                     account_birth DATE,
                     account_country VARCHAR(50),

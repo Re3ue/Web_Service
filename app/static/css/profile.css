@@ -55,9 +55,12 @@
     gap: 1rem;
 }
 
-.profile_account_name {}
+.profile_account_name {
+    font-size: 1.25rem;
+    color: #ccc;
+}
 
-.profile_account_password {}
+.profile_account_display_name {}
 
 .profile_account_information {
     display: flex;

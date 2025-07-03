@@ -7,6 +7,7 @@ import os
 # Import : External
 from flask import Blueprint, request, jsonify, session
 from .authenticate import authenticate_sign_in_sign_out, authenticate_session_account_target_account, authenticate_session_account_post_account
+import bcrypt
 
 # Import : File
 from .db import open_db
@@ -30,11 +31,11 @@ def sign_in() :
     if not authenticate_result :
         sign_in_data = request.get_json() # Get Sign In Data
 
-        account_name = sign_in_data.get('name')
-        account_password = sign_in_data.get('password')
+        input_account_name = sign_in_data.get('name')
+        input_account_password_raw = sign_in_data.get('password')
 
         # Check : Require
-        if (not account_name) or (not account_password) :
+        if (not input_account_name) or (not input_account_password_raw) :
             return jsonify({"result" : 0, "error" : "Miss Require Fields"})
         
         # SQL Query
@@ -42,25 +43,33 @@ def sign_in() :
             connect_db = open_db()
 
             with connect_db.cursor() as cursor:
-                sql = "SELECT account_id FROM account WHERE account_name = %s AND account_password = %s"
+                sql = "SELECT account_id, account_password FROM account WHERE account_name = %s"
                 
-                cursor.execute(sql, ( account_name, account_password ))
+                cursor.execute(sql, ( input_account_name, ))
 
                 account = cursor.fetchone() # Get Account
 
                 if not account :
                     return jsonify({"result" : 0, "error" : "Not Exist : Account"})
+                
+                account_password = account['account_password'] # Get Password ( Hash )
 
-                account_id = account['account_id']
+                # Check - Success : Account - Password
+                if bcrypt.checkpw(input_account_password_raw.encode('utf-8'), account_password.encode('utf-8')) :
+                    account_id = account['account_id']
 
-                session['account_id'] = account_id # Create Session - "account_id"
+                    session['account_id'] = account_id # Create Session - "account_id"
+                
+                # Check - Fail : Account - Password
+                else :
+                    return jsonify({"result" : 0, "error" : "Fail to Sign In - Password"})
 
             return jsonify({"result" : 1, "account_id" : account_id})
 
         except Exception as e :
             print(f"[ ERROR ] Fail to Sign In : {e}")
 
-            return jsonify({"result" : 0, "error" : "Fail to Sign In"})
+            return jsonify({"result" : 0, "error" : f"Fail to Sign In - {e}"})
 
         finally :
             connect_db.close()
@@ -72,24 +81,14 @@ def sign_in() :
 # API - Account : Sign Out
 @blueprint_api_account.route('/api/sign_out', methods = ['POST'])
 def sign_out() :
-    authenticate_result = False
+    try :
+        session.pop("account_id", None) # Delete Session - "account_id"
 
-    authenticate_result = authenticate_sign_in_sign_out()
-
-    # Authenticate - Success ( State : Sign In ) => Can Access
-    if authenticate_result :
-        try :
-            session.pop("account_id", None) # Delete Session - "account_id"
-
-            return jsonify({"result" : 1})
-        
-        except Exception as e :
-            return jsonify({"result" : 0, "error" : "Fail to Sign Out"})
+        return jsonify({"result" : 1})
     
-    # Authenticate - Fail ( State : Sign Out ) => Can Not Access
-    else :
-        return jsonify({"result" : 0, "error" : "Fail to Authenticate"})
-
+    except Exception as e :
+        return jsonify({"result" : 0, "error" : "Fail to Sign Out"})
+    
 ########## ########## ########## ##########
 # API - Account : Create / Edit / Delete
 ########## ########## ########## ##########
@@ -107,7 +106,7 @@ def create_account() :
 
         account_name = account_data.get('name')
         account_display_name = account_data.get('displayName')
-        account_password = account_data.get('password')
+        account_password_raw = account_data.get('password')
         
         account_country = account_data.get('country')
         account_birth = account_data.get('birth')
@@ -118,14 +117,29 @@ def create_account() :
         account_edit_date = ""
 
         # Check : Require
-        if (not account_name) or (not account_display_name) or (not account_password) :
+        if (not account_name) or (not account_display_name) or (not account_password_raw) :
             return jsonify({"result" : 0, "error" : "Miss Require Fields"})
+        
+        # Hash ( Password )
+        account_password = bcrypt.hashpw(account_password_raw.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         
         # SQL Query : Insert to Account Table
         try :
             connect_db = open_db()
 
             with connect_db.cursor() as cursor :
+                # Check - Exist : "account_name" / "account_display_name"
+                sql = "SELECT * FROM account WHERE account_name = %s OR account_display_name = %s"
+
+                cursor.execute(sql, ( account_name, account_display_name ))
+
+                exist_flag = True
+
+                exist_flag = cursor.fetchone()
+
+                if exist_flag :
+                    return jsonify({"result": 0, "error": "Fail to Create Account - Exist \"account_name\" OR \"account_display_name\""})
+                
                 sql = """
                 INSERT INTO account (
                     account_name, account_display_name, account_password,
@@ -148,7 +162,7 @@ def create_account() :
         except Exception as e :
             print(f"[ ERROR ] Fail to Create Account : {e}")
 
-            return jsonify({"result" : 0, "error" : "Fail to Create Account"})
+            return jsonify({"result" : 0, "error" : f"Fail to Create Account - {e}"})
         
         finally :
             connect_db.close()
@@ -170,7 +184,7 @@ def edit_account(account_id) :
 
         account_name = account_form_data.get('name')
         account_display_name = account_form_data.get('displayName')
-        account_password = account_form_data.get('password')
+        account_password_raw = account_form_data.get('password')
 
         account_birth = account_form_data.get('birth') or None
         account_country = account_form_data.get('country') or None
@@ -180,8 +194,35 @@ def edit_account(account_id) :
         # print(f"[ DEBUG ] \"account_image\" : {account_image}", flush = True)
 
         # Check : Require
-        if (not account_name) or (not account_display_name) or (not account_password) :
+        if (not account_name) or (not account_display_name) or (not account_password_raw) :
             return jsonify({"result" : 0, "error" : "Miss Require Fields"})
+        
+        # Hash ( Password )
+        account_password = bcrypt.hashpw(account_password_raw.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        
+        # Check - Exist : "account_name" / "account_display_name"
+        try : 
+            connect_db = open_db()
+
+            with connect_db.cursor() as cursor :
+                sql = "SELECT * FROM account WHERE account_name = %s OR account_display_name = %s"
+
+                cursor.execute(sql, ( account_name, account_display_name ))
+
+                exist_flag = True
+
+                exist_flag = cursor.fetchone()
+
+                if exist_flag :
+                    return jsonify({"result": 0, "error": "Fail to Create Account - Exist \"account_name\" OR \"account_display_name\""})
+        
+        except Exception as e :
+            print(f"[ ERROR ] Fail to Edit Account : {e}")
+
+            return jsonify({"result" : 0, "error" : f"Fail to Edit Account - {e}"})
+        
+        finally :
+            connect_db.close()
 
         account_image_file_path = ""
 
@@ -249,7 +290,7 @@ def edit_account(account_id) :
         except Exception as e :
             print(f"[ ERROR ] Fail to Edit Account : {e}")
 
-            return jsonify({"result" : 0, "error" : "Fail to Edit Account"})
+            return jsonify({"result" : 0, "error" : f"Fail to Edit Account - {e}"})
         
         finally :
             connect_db.close()
@@ -284,7 +325,7 @@ def delete_account(account_id) :
         except Exception as e :
             print(f"[ ERROR ] Fail to Delete Account : {e}")
 
-            return jsonify({"result" : 0, "error" : "Fail to Delete Account"})
+            return jsonify({"result" : 0, "error" : f"Fail to Delete Account - {e}"})
     
         finally :
             connect_db.close()
