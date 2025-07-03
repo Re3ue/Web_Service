@@ -15,8 +15,14 @@
     <div class="post_title">{{ post.post_title }}</div>
     
     <div class="post_account">
-        <a href="/profile/{{ post.post_account_id }}">Post Account : {{ post.post_account_name }}</a>
+        <a href="/profile/{{ post.post_account_id }}">Post Account : {{ post.post_account_display_name }}</a>
     </div>
+
+    {% if post.post_file %}
+    <div class="post_file">
+        <a href="{{ post.post_file }}" class="post_file_link" download>File : {{ post.post_file }}</a>
+    </div>
+    {% endif %}
 
     <div class="post_content">{{ post.post_content }}</div>
     <div class="post_information">

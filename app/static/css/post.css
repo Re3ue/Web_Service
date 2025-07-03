@@ -51,6 +51,32 @@
     text-decoration: underline;
 }
 
+.post_file {
+    margin: 1rem 0;
+}
+
+.post_file_link {
+    text-decoration: none;
+    text-align: center;
+
+    display: block;
+
+    font-size: 1rem;
+    color: #0044cc;
+
+    padding: 0.5rem 1rem;
+
+    border: 1px solid #0044cc;
+    border-radius: 0.25rem;
+
+    cursor: pointer;
+}
+.post_file_link:hover {
+    color: white;
+    
+    background-color: #0044cc;
+}
+
 .post_content {
     font-size: 1.25rem;
     line-height: 1.5;

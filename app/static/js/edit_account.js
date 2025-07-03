@@ -49,12 +49,12 @@ async function editAccountPost(editAccountId) {
     // Form Data
     const formData = new FormData();
 
-    if (image) formData.append("image", image);
     formData.append("name", name);
     formData.append("password", password);
     formData.append("displayName", displayName);
     if (birth) formData.append("birth", birth);
     if (country) formData.append("country", country);
+    if (image) formData.append("image", image);
 
     // Request : Edit Account to Server
     try {

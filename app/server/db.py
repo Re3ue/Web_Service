@@ -40,9 +40,9 @@ def initialize_db() :
                 CREATE TABLE IF NOT EXISTS account (
                     account_id INT AUTO_INCREMENT PRIMARY KEY,
                            
-                    account_name VARCHAR(20) NOT NULL,
+                    account_name VARCHAR(20) NOT NULL UNIQUE,
+                    account_display_name VARCHAR(20) NOT NULL UNIQUE,
                     account_password VARCHAR(20) NOT NULL,
-                    account_display_name VARCHAR(20) NOT NULL,
                            
                     account_birth DATE,
                     account_country VARCHAR(50),
@@ -83,11 +83,13 @@ def initialize_db() :
                            
                     post_title VARCHAR(255) NOT NULL,
                     post_content TEXT NOT NULL,
+                           
+                    post_file VARCHAR(255),
+                           
                     post_create_date VARCHAR(20) NOT NULL,
                     post_edit_date VARCHAR(20) NOT NULL,
-                    post_upvote INT DEFAULT 0,
                            
-                    post_file VARCHAR(20)
+                    post_upvote INT DEFAULT 0
                 )
             """)
 

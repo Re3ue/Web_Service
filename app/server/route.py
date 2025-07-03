@@ -25,11 +25,11 @@ def sign_in() :
 
     authenticate_result = authenticate_sign_in_sign_out()
 
-    # Authenticate - Success
+    # Authenticate - Success ( State : Sign Out ) => Can Access
     if not authenticate_result :
         return render_template('sign_in.html')
 
-    # Authenticate - Fail
+    # Authenticate - Fail ( Sate : Sign In ) => Can Not Access
     return render_template('index.html')
 
 @blueprint_route.route('/sign_up')
@@ -38,11 +38,11 @@ def sign_up() :
 
     authenticate_result = authenticate_sign_in_sign_out()
 
-    # Authenticate - Success
+    # Authenticate - Success ( State : Sign Out ) => Can Access
     if not authenticate_result :
         return render_template('sign_up.html')
 
-    # Authenticate - Fail
+    # Authenticate - Fail ( Sate : Sign In ) => Can Not Access
     return render_template('index.html')
 
 # Post : Post ID
@@ -69,7 +69,7 @@ def edit_post(post_id) :
 
     authenticate_result = authenticate_session_account_post_account(post_id)
 
-    # Authenticate - Success
+    # Authenticate - Success => Can Access
     if authenticate_result :
         try :
             connect_db = open_db()
@@ -86,7 +86,7 @@ def edit_post(post_id) :
         except Exception as e :
             return render_template('index.html')
 
-    # Authenticate - Fail
+    # Authenticate - Fail => Can Not Access
     return render_template('index.html')
 
 # Create Post
@@ -96,7 +96,7 @@ def create_post() :
 
     authenticate_result = authenticate_sign_in_sign_out()
 
-    # Authenticate - Success
+    # Authenticate - Success ( State : Sign In ) => Can Access
     if authenticate_result :
         try :
             connect_db = open_db()
@@ -118,34 +118,25 @@ def create_post() :
         except Exception as e :
             return render_template('index.html')
 
-    # Authenticate - Fail
+    # Authenticate - Fail ( Sate : Sign Out ) => Can Not Access
     return render_template('index.html')
 
 # Profile : Account ID
 @blueprint_route.route('/profile/<int:account_id>')
 def profile(account_id) :
-    authenticate_result = False
+    connect_db = open_db()
 
-    authenticate_result = authenticate_sign_in_sign_out()
+    with connect_db.cursor() as cursor :
+        sql = "SELECT * FROM account WHERE account_id = %s"
 
-    # Authenticate - Success
-    if authenticate_result :
-        connect_db = open_db()
+        cursor.execute(sql, ( account_id, ))
 
-        with connect_db.cursor() as cursor :
-            sql = "SELECT * FROM account WHERE account_id = %s"
+        account = cursor.fetchone() # Get Fetch One
 
-            cursor.execute(sql, ( account_id, ))
-
-            account = cursor.fetchone() # Get Fetch One
-
-            if not account :
-                return "No Account"
-            
-        return render_template('profile.html', account = account)
-    
-    else :
-        return render_template('index.html')
+        if not account :
+            return "No Account"
+        
+    return render_template('profile.html', account = account)
 
 # Edit Account
 @blueprint_route.route('/edit_account_get/<int:account_id>')
@@ -154,25 +145,11 @@ def edit_account(account_id) :
 
     authenticate_result = authenticate_session_account_target_account(account_id)
 
-    # Authenticate - Success
+    # Authenticate - Success => Can Access
     if authenticate_result :
         try :
-            session_account_id = session['account_id'] # Get Account ID from Session
-
             connect_db = open_db()
-
-            # Check #1
-            with connect_db.cursor() as cursor :
-                sql = "SELECT * FROM account WHERE account_id = %s"
-
-                cursor.execute(sql, ( session_account_id, ))
-
-                account = cursor.fetchone() # Get Fetch One
-
-                if not account :
-                    return render_template('index.html') # Not Valid Access
             
-            # Check #2
             with connect_db.cursor() as cursor :
                 sql = "SELECT * FROM account WHERE account_id = %s"
                     
@@ -180,17 +157,11 @@ def edit_account(account_id) :
 
                 account = cursor.fetchone() # Get Fetch One
 
-                if not account :
-                    return render_template('index.html') # Not Valid Access
-                
-                if session_account_id != account['account_id'] :
-                    return render_template('index.html') # Not Valid Access
-
             return render_template('edit_account.html', account = account)
         
         except Exception as e :
             return render_template('index.html')
     
-    # Authenticate - Fasil
+    # Authenticate - Fail => Can Not Access
     else :
         return render_template('index.html')

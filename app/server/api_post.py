@@ -2,6 +2,7 @@
 
 # Import : Internal
 from datetime import datetime
+import os
 
 # Import : External
 from flask import Blueprint, request, jsonify, session
@@ -21,111 +22,238 @@ blueprint_api_post = Blueprint('blueprint_api_post', __name__)
 # API - Post : Create Post
 @blueprint_api_post.route('/api/create_post', methods = ['POST'])
 def create_post() :
-    account_id = session['account_id'] # Get Account ID from Session
+    authenticate_result = False
 
-    # Check : Sign In
-    if not account_id :
-        return jsonify({"error" : "Fail to Check - Sign In"})
+    authenticate_result = authenticate_sign_in_sign_out()
 
-    post_data = request.get_json() # Get Post Data
+    # Authenticate - Success ( State : Sign In ) => Can Access
+    if authenticate_result :
+        post_account = None
 
-    post_account_id = account_id
-    post_account_name = ""
+        account_id = session['account_id']
 
-    # SQL Query : Get from Account Table
-    try :
-        connect_db = open_db()
+        try :
+            connect_db = open_db()
 
-        with connect_db.cursor() as cursor :
-            sql = "SELECT * FROM account WHERE account_id = %s"
-            
-            cursor.execute(sql, ( account_id, ))
+            with connect_db.cursor() as cursor :
+                sql = "SELECT * FROM account WHERE account_id = %s"
+                
+                cursor.execute(sql, ( account_id, ))
 
-            post_account = cursor.fetchone() # Get A Post Account
-
-            post_account_name = post_account['account_name']
+                post_account = cursor.fetchone() # Get A Post Account
         
-    except Exception as e :
-        print(f"[ ERROR ] Fail to Get Post Account : {e}")
+        except Exception as e :
+            print(f"[ ERROR ] Fail to Get Post Account : {e}")
 
-        return jsonify({"result" : 0, "error" : "Fail to Get Post Account"})
-    
-    finally :
-        connect_db.close()
+            return jsonify({"result" : 0, "error" : "Fail to Get Post Account"})
 
-    post_title = post_data.get('title')
-    post_content = post_data.get('content')
+        finally :
+            connect_db.close()
 
-    post_create_date = datetime.now().strftime("%Y-%m-%d %H:%M")
-    post_edit_date = ""
+        post_account_id = post_account['account_id']
+        post_account_display_name = post_account['account_display_name']
 
-    # Check : Require
-    if (not post_title) or (not post_content) :
-        return jsonify({"error" : "Miss Require Fields"})
-    
-    # SQL Query : Insert to Post Table
-    try :
-        connect_db = open_db()
+        post_title = request.form.get('title')
+        post_content = request.form.get('content')
 
-        with connect_db.cursor() as cursor :
-            sql = "INSERT INTO post (post_account_id, post_account_name, post_title, post_content, post_create_date, post_edit_date) VALUES (%s, %s, %s, %s, %s, %s)"
-            
-            cursor.execute(sql, ( post_account_id, post_account_name, post_title, post_content, post_create_date, post_edit_date ))
+        post_file = request.files.get('file') or None # Get - with "request.files.get()" : O / with "account_form_data.get()" : X
 
-            connect_db.commit()
+        # print(f"[ DEBUG ] \"post_file\" : {post_file}", flush = True)
 
-            post_id = cursor.lastrowid # Get Post ID : Last Post
+        # Check : Require
+        if (not post_title) or (not post_content) :
+            return jsonify({"result" : 0, "error" : "Miss Require Fields"})
         
-        return jsonify({"result" : 1, "post_id" : post_id})
+        post_create_date = datetime.now().strftime("%Y%m%d_%H%M%S")
+        post_edit_date = ""
+        
+        post_file_file_path = ""
 
-    except Exception as e :
-        print(f"[ ERROR ] Fail to Create Post : {e}")
+        # Save : Post File to Server
+        if (post_file) and (post_file.filename != "") :
+            post_file_file_name = f"post_{post_account_id}_{post_create_date}_{post_file.filename}"
 
-        return jsonify({"result" : 0, "error" : "Fail to Create Post"})
-    
-    finally :
-        connect_db.close()
+            # print(f"[ DEBUG ] \"post_file_file_name\" : {post_file_file_name}", flush = True)
+
+            post_file_directory_path = os.path.join("static", "image/image_post") # Get - Path : Directory
+
+            os.makedirs(post_file_directory_path, exist_ok = True) # Check
+
+            save_post_file_file_path = os.path.join(post_file_directory_path, post_file_file_name)
+            
+            post_file.save(save_post_file_file_path) # Save Post File to Server ( "save_post_file_file_path" )
+
+            post_file_file_path = f"/static/image/image_post/{post_file_file_name}"
+
+            print(f"[ DEBUG ] \"post_file_file_path\" : {post_file_file_path}", flush = True)
+
+        # SQL Query : Insert to Post Table
+        try :
+            connect_db = open_db()
+
+            with connect_db.cursor() as cursor :
+                # Exist : Create - Post File
+                if post_file_file_path :
+                    sql = """
+                        INSERT INTO post (
+                            post_account_id,
+                            post_account_display_name,
+
+                            post_title,
+                            post_content,
+
+                            post_file,
+
+                            post_create_date,
+                            post_edit_date
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    """
+                    
+                    cursor.execute(sql, ( post_account_id, post_account_display_name, post_title, post_content, post_file_file_path, post_create_date, post_edit_date ))
+
+                # Not Exist : Create - Post File
+                else :
+                    sql = """
+                        INSERT INTO post (
+                            post_account_id,
+                            post_account_display_name,
+
+                            post_title,
+                            post_content,
+
+                            post_create_date,
+                            post_edit_date
+                        ) VALUES (%s, %s, %s, %s, %s, %s)
+                    """
+
+                    cursor.execute(sql, ( post_account_id, post_account_display_name, post_title, post_content, post_create_date, post_edit_date ))
+
+                connect_db.commit()
+
+                post_id = cursor.lastrowid # Get Post ID : Last Post
+            
+            return jsonify({"result" : 1, "post_id" : post_id})
+
+        except Exception as e :
+            print(f"[ ERROR ] Fail to Create Post : {e}")
+
+            return jsonify({"result" : 0, "error" : "Fail to Create Post"})
+        
+        finally :
+            connect_db.close()
+
+    # Authenticate - Fail ( Sate : Sign Out ) => Can Not Access
+    else :
+        return jsonify({"result" : 0, "error" : "Fail to Authenticate"})
 
 # API - Post : Edit Post
 @blueprint_api_post.route('/api/edit_post_post/<int:post_id>', methods = ['POST'])
 def edit_post_post(post_id) :
-    post_data = request.get_json() # Get Post Data
+    authenticate_result = False
 
-    post_title = post_data.get('title')
-    post_content = post_data.get('content')
+    authenticate_result = authenticate_session_account_post_account(post_id)
 
-    post_edit_date = datetime.now().strftime("%Y-%m-%d %H:%M")
+    # Authenticate - Success => Can Access
+    if authenticate_result :
+        post_account = None
 
-    # Check : Require
-    if (not post_title) or (not post_content) :
-        return jsonify({"error" : "Miss Require Fields"})
-    
-    # SQL Query : Insert to Post Table
-    try :
-        connect_db = open_db()
+        account_id = session['account_id']
 
-        with connect_db.cursor() as cursor :
-            sql = """
-                UPDATE post
-                SET post_title = %s,
-                    post_content = %s,
-                    post_edit_date = %s
-                WHERE post_id = %s
-            """
-            
-            cursor.execute(sql, ( post_title, post_content, post_edit_date, post_id ))
+        try :
+            connect_db = open_db()
 
-            connect_db.commit()
+            with connect_db.cursor() as cursor :
+                sql = "SELECT * FROM account WHERE account_id = %s"
+                
+                cursor.execute(sql, ( account_id, ))
+
+                post_account = cursor.fetchone() # Get A Post Account
         
-        return jsonify({"result" : 1, "post_id" : post_id})
+        except Exception as e :
+            print(f"[ ERROR ] Fail to Get Post Account : {e}")
 
-    except Exception as e :
-        print(f"[ ERROR ] Fail to Edit Post : {e}")
+            return jsonify({"result" : 0, "error" : "Fail to Get Post Account"})
 
-        return jsonify({"result" : 0, "error" : "Fail to Edit Post"})
+        finally :
+            connect_db.close()
+
+        post_account_id = post_account['account_id']
+        post_account_display_name = post_account['account_display_name'] # Not Use
+
+        post_title = request.form.get('title')
+        post_content = request.form.get('content')
+
+        post_file = request.files.get('file') or None # Get - with "request.files.get()" : O / with "account_form_data.get()" : X
+
+        # Check : Require
+        if (not post_title) or (not post_content) :
+            return jsonify({"result" : 0, "error" : "Miss Require Fields"})
+        
+        post_edit_date = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+        post_file_file_path = ""
+
+        # Save : Post File to Server
+        if (post_file) and (post_file.filename != "") :
+            post_file_file_name = f"post_{post_account_id}_{post_edit_date}_{post_file.filename}"
+
+            post_file_directory_path = os.path.join("static", "image/image_post") # Get - Path : Directory
+
+            os.makedirs(post_file_directory_path, exist_ok = True) # Check
+
+            save_post_file_file_path = os.path.join(post_file_directory_path, post_file_file_name)
+            
+            post_file.save(save_post_file_file_path) # Save Post File to Server ( "save_post_file_file_path" )
+
+            post_file_file_path = f"/static/image/image_post/{post_file_file_name}"
+        
+        # SQL Query : Insert to Post Table
+        try :
+            connect_db = open_db()
+
+            with connect_db.cursor() as cursor :
+                # Exist : Create - Post File
+                if post_file_file_path :
+                    sql = """
+                        UPDATE post
+                        SET post_title = %s,
+                            post_content = %s,
+
+                            post_file = %s,
+
+                            post_edit_date = %s
+                        WHERE post_id = %s
+                    """
+                    
+                    cursor.execute(sql, ( post_title, post_content, post_file_file_path, post_edit_date, post_id ))
+
+                # Not Exist : Create - Post File
+                else :
+                    sql = """
+                        UPDATE post
+                        SET post_title = %s,
+                            post_content = %s,
+
+                            post_edit_date = %s
+                        WHERE post_id = %s
+                    """
+
+                    cursor.execute(sql, ( post_title, post_content, post_edit_date, post_id ))
+
+                connect_db.commit()
+            
+            return jsonify({"result" : 1, "post_id" : post_id})
+
+        except Exception as e :
+            print(f"[ ERROR ] Fail to Edit Post : {e}")
+
+            return jsonify({"result" : 0, "error" : "Fail to Edit Post"})
+        
+        finally :
+            connect_db.close()
     
-    finally :
-        connect_db.close()
+    # Authenticate - Fail => Can Not Access
+    return jsonify({"result" : 0, "error" : "Fail to Authenticate"})
 
 # API - Post : Delete Post
 @blueprint_api_post.route('/api/delete_post/<int:post_id>', methods = ['DELETE'])
@@ -134,7 +262,7 @@ def delete_post(post_id) :
 
     authenticate_result = authenticate_session_account_post_account(post_id)
 
-    # Authenticate - Success
+    # Authenticate - Success => Can Access
     if authenticate_result :
         try :
             connect_db = open_db()
@@ -156,7 +284,7 @@ def delete_post(post_id) :
         finally :
             connect_db.close()
 
-    # Authenticate - Success
+    # Authenticate - Fail => Can Not Access
     else :
         return jsonify({"result" : 0, "error" : "Fail to Authenticate"})
 
@@ -252,6 +380,8 @@ def search_post() :
                 """
 
                 cursor.execute(sql, ( like_search_input ))
+            
+            # Search By Account => To Do
 
             # Search By All
             else :

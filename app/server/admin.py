@@ -53,11 +53,11 @@ def admin() :
     
     authenticate_result = authenticate_admin()
 
-    # Authenticate - Success
+    # Authenticate - Success => Can Access
     if authenticate_result :
         return render_template('admin.html')
 
-    # Authenticate - Fail
+    # Authenticate - Fail => Can Not Access
     else :
         return render_template('index.html')
 
@@ -72,7 +72,7 @@ def get_all_account() :
     
     authenticate_result = authenticate_admin()
 
-    # Authenticate - Success
+    # Authenticate - Success => Can Access
     if authenticate_result :
         # SQL Query : Get All Account from Account Table
         try :
@@ -98,7 +98,7 @@ def get_all_account() :
         finally :
             connect_db.close()
     
-    # Authenticate - Fail
+    # Authenticate - Fail => Can Not Access
     else :
         return jsonify({"result" : 0, "error" : "Fail to Authenticate"})
 
@@ -109,7 +109,7 @@ def delete_all_account() :
     
     authenticate_result = authenticate_admin()
 
-    # Authenticate - Success
+    # Authenticate - Success => Can Access
     if authenticate_result :
         # SQL Query : Delete All Data from Account Table
         try :
@@ -132,7 +132,7 @@ def delete_all_account() :
         finally :
             connect_db.close()
     
-    # Authenticate - Fail
+    # Authenticate - Fail => Can Not Access
     else :
         return jsonify({"result" : 0, "error" : "Fail to Authenticate"})
 
@@ -143,7 +143,7 @@ def delete_account(account_id) :
     
     authenticate_result = authenticate_admin()
 
-    # Authenticate - Success
+    # Authenticate - Success => Can Access
     if authenticate_result :
         # SQL Query : Delete Account Data from Account Table
         try :
@@ -166,7 +166,7 @@ def delete_account(account_id) :
         finally :
             connect_db.close()
     
-    # Authenticate - Fail
+    # Authenticate - Fail => Can Not Access
     else :
         return jsonify({"result" : 0, "error" : "Fail to Authenticate"})
 
@@ -177,7 +177,7 @@ def create_account_100() :
     
     authenticate_result = authenticate_admin()
 
-    # Authenticate - Success
+    # Authenticate - Success => Can Access
     if authenticate_result :
         try :
             connect_db = open_db()
@@ -208,7 +208,7 @@ def create_account_100() :
         finally :
             connect_db.close()
     
-    # Authenticate - Fail
+    # Authenticate - Fail => Can Not Access
     else :
         return jsonify({"result" : 0, "error" : "Fail to Authenticate"})
 
@@ -223,7 +223,7 @@ def get_all_post() :
     
     authenticate_result = authenticate_admin()
 
-    # Authenticate - Success
+    # Authenticate - Success => Can Access
     if authenticate_result :
         # SQL Query : Get All Post from Post Table
         try :
@@ -249,7 +249,7 @@ def get_all_post() :
         finally :
             connect_db.close()
     
-    # Authenticate - Fail
+    # Authenticate - Fail => Can Not Access
     else :
         return jsonify({"result" : 0, "error" : "Fail to Authenticate"})
 
@@ -260,7 +260,7 @@ def delete_all_post() :
     
     authenticate_result = authenticate_admin()
 
-    # Authenticate - Success
+    # Authenticate - Success => Can Access
     if authenticate_result :
         # SQL Query : Delete All Data from Post Table
         try :
@@ -283,7 +283,7 @@ def delete_all_post() :
         finally :
             connect_db.close()
     
-    # Authenticate - Fail
+    # Authenticate - Fail => Can Not Access
     else :
         return jsonify({"result" : 0, "error" : "Fail to Authenticate"})
 
@@ -294,7 +294,7 @@ def delete_post(post_id) :
     
     authenticate_result = authenticate_admin()
 
-    # Authenticate - Success
+    # Authenticate - Success => Can Access
     if authenticate_result :
         # SQL Query : Delete Post Data from Post Table
         try :
@@ -317,7 +317,7 @@ def delete_post(post_id) :
         finally :
             connect_db.close()
     
-    # Authenticate - Fail
+    # Authenticate - Fail => Can Not Access
     else :
         return jsonify({"result" : 0, "error" : "Fail to Authenticate"})
 
@@ -328,7 +328,7 @@ def create_post_100() :
     
     authenticate_result = authenticate_admin()
 
-    # Authenticate - Success
+    # Authenticate - Success => Can Access
     if authenticate_result :
         try :
             connect_db = open_db()
@@ -362,6 +362,6 @@ def create_post_100() :
         finally :
             connect_db.close()
     
-    # Authenticate - Fail
+    # Authenticate - Fail => Can Not Access
     else :
         return jsonify({"result" : 0, "error" : "Fail to Authenticate"})

@@ -66,7 +66,7 @@ function renderAllPost(currentPage) {
             <div class="all_post_element_title">
                 <a href="/post/${postElement.post_id}">${postElement.post_title}</a>
             </div>
-            <div class="all_post_element_account">${postElement.post_account_name}</div>
+            <div class="all_post_element_account">${postElement.post_account_display_name}</div>
             <div class="all_post_element_content">${postElement.post_content}</div>
             <div class="all_post_element_information">Create Date : ${postElement.post_create_date} | Edit Date : ${postElement.post_edit_date} | Up Vote : ${postElement.post_upvote}</div>
         `;
