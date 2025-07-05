@@ -343,3 +343,149 @@ def delete_account(account_id) :
 # API - Account : Get A Account
 
 # API - Account : Search Account
+
+########## ########## ########## ##########
+# API - Account : Find ID / Change Password ( #1 / #2 )
+########## ########## ########## ##########
+
+# API - Account : Find ID
+@blueprint_api_account.route('/api/find_id', methods = ['POST'])
+def find_id() :
+    authenticate_result = False
+
+    authenticate_result = authenticate_sign_in_sign_out()
+
+    # Authenticate - Success ( State : Sign Out ) => Can Access
+    if not authenticate_result :
+        change_password_data = request.get_json() # Get Find ID Data
+
+        change_password_display_name = change_password_data.get('displayName')
+
+        # Check : Require
+        if (not change_password_display_name) :
+            return jsonify({"result" : 0, "error" : "Miss Require Fields"})
+        
+        # SQL Query
+        try :
+            connect_db = open_db()
+
+            with connect_db.cursor() as cursor:
+                sql = "SELECT account_name FROM account WHERE BINARY account_display_name = %s"
+
+                cursor.execute(sql, ( change_password_display_name, ))
+
+                account = cursor.fetchone() # Get Account
+
+                if not account :
+                    return jsonify({"result" : 0, "error" : "Not Exist : Account"})
+                
+                account_name = account['account_name'] # Get Account Name
+
+                return jsonify({"result" : 1, "account_name" : account_name})
+        
+        except Exception as e :
+            print(f"[ ERROR ] Fail to Find ID : {e}")
+
+            return jsonify({"result" : 0, "error" : f"Fail to Find ID - {e}"})
+
+        finally :
+            connect_db.close()
+        
+    # Authenticate - Fail ( State : Sign In ) => Can Not Access
+    else :
+        return jsonify({"result" : 0, "error" : "Fail to Authenticate"})
+
+# API - Account : Change Password #1
+@blueprint_api_account.route('/api/change_password_1', methods = ['POST'])
+def change_password_1() :
+    authenticate_result = False
+
+    authenticate_result = authenticate_sign_in_sign_out()
+
+    # Authenticate - Success ( State : Sign Out ) => Can Access
+    if not authenticate_result :
+        change_password_data = request.get_json() # Get Change Password Data
+
+        change_password_name = change_password_data.get('name')
+        change_password_display_name = change_password_data.get('displayName')
+
+        # Check : Require
+        if (not change_password_name) or (not change_password_display_name) :
+            return jsonify({"result" : 0, "error" : "Miss Require Fields"})
+        
+        # SQL Query
+        try :
+            connect_db = open_db()
+
+            with connect_db.cursor() as cursor:
+                sql = "SELECT account_id FROM account WHERE BINARY account_name = %s AND BINARY account_display_name = %s"
+
+                cursor.execute(sql, ( change_password_name, change_password_display_name, ))
+
+                account = cursor.fetchone() # Get Account
+
+                if not account :
+                    return jsonify({"result" : 0, "error" : "Not Exist : Account"})
+                
+                account_id = account['account_id'] # Get Account ID
+
+                session['change_password_account_id'] = account_id # Create Session - "change_password_account_id"
+
+                return jsonify({"result" : 1, "account_id" : account_id})
+        
+        except Exception as e :
+            print(f"[ ERROR ] Fail to Change Password : {e}")
+
+            return jsonify({"result" : 0, "error" : f"Fail to Change Password - {e}"})
+
+        finally :
+            connect_db.close()
+        
+    # Authenticate - Fail ( State : Sign In ) => Can Not Access
+    else :
+        return jsonify({"result" : 0, "error" : "Fail to Authenticate"})
+
+# API - Account : Change Password #2
+@blueprint_api_account.route('/api/change_password_2/<int:account_id>', methods = ['POST'])
+def change_password_2(account_id) :
+    change_password_account_id = session.get('change_password_account_id') # Get Session - "change_password_account_id"
+
+    # Authenticate - Can Access from "change_password_1" ( Only )
+    if (change_password_account_id is None) or (account_id != change_password_account_id) :
+        return jsonify({"result": 0, "error": "Fail to Authenticate - Change Password"})
+    
+    new_password_data = request.get_json() # Get New Password Data
+
+    new_password_raw = new_password_data.get('newPassword')
+
+    # Hash ( Password )
+    account_password = bcrypt.hashpw(new_password_raw.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    # Save : Edit Date to DB
+    account_edit_date = datetime.now().strftime("%Y%m%d_%H%M")
+
+    # SQL Query : Insert to Account Table
+    try :
+        connect_db = open_db()
+
+        with connect_db.cursor() as cursor :
+            sql = """
+                UPDATE account
+                SET account_password = %s,
+                    account_edit_date = %s
+                WHERE account_id = %s
+            """
+
+            cursor.execute(sql, ( account_password, account_edit_date, account_id ))
+
+            session.pop("change_password_account_id", None) # Delete Session - "change_password_account_id"
+        
+        return jsonify({"result" : 1, "new_password_raw" : new_password_raw})
+    
+    except Exception as e :
+        print(f"[ ERROR ] Fail to Change Password : {e}")
+
+        return jsonify({"result" : 0, "error" : f"Fail to Change Password - {e}"})
+    
+    finally :
+        connect_db.close()

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+<!-- CSS -->
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/find_id.css') }}">
+{% endblock %}
+
+<!-- Main -->
+{% block content %}
+<div class="find_container">
+    <div class="find_title">Find ID</div>
+
+    <form class="find_form">
+        <input type="text" class="find_form_display_name" placeholder="( Account ) Display Name" required>
+        
+        <button type="submit" class="find_form_button">Find ID</button>
+    </form>
+
+    <div class="find_option_container">
+        <a class="find_option_link" href="/change_password_1">Change Password</a>
+        <a class="find_option_link" href="/sign_in">Sign In</a>
+        <a class="find_option_link" href="/sign_up">Sign Up</a>
+    </div>
+</div>
+{% endblock %}
+
+<!-- JS -->
+{% block js %}
+<script src="{{ url_for('static', filename='js/find_id.js') }}"></script>
+{% endblock %}
