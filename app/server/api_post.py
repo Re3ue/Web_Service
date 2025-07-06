@@ -6,6 +6,7 @@ import os
 
 # Import : External
 from flask import Blueprint, request, jsonify, session
+import bcrypt
 
 # Import : File
 from .db import open_db
@@ -56,9 +57,9 @@ def create_post() :
         post_title = request.form.get('title')
         post_content = request.form.get('content')
 
-        post_file = request.files.get('file') or None # Get - with "request.files.get()" : O / with "account_form_data.get()" : X
-
-        # print(f"[ DEBUG ] \"post_file\" : {post_file}", flush = True)
+        # Get - with "request.files.get()" : O / with "account_form_data.get()" : X
+        post_file = request.files.get('file') or None
+        post_password_raw = request.form.get('password') or None
 
         # Check : Require
         if (not post_title) or (not post_content) :
@@ -87,46 +88,46 @@ def create_post() :
 
             print(f"[ DEBUG ] \"post_file_file_path\" : {post_file_file_path}", flush = True)
 
+        post_password_hash = ""
+
+        # Hash : Post Password
+        if post_password_raw :
+            post_password_hash = bcrypt.hashpw(post_password_raw.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
         # SQL Query : Insert to Post Table
         try :
             connect_db = open_db()
 
             with connect_db.cursor() as cursor :
-                # Exist : Create - Post File
-                if post_file_file_path :
-                    sql = """
-                        INSERT INTO post (
-                            post_account_id,
-                            post_account_display_name,
+                sql = """
+                    INSERT INTO post (
+                        post_account_id,
+                        post_account_display_name,
 
-                            post_title,
-                            post_content,
+                        post_title,
+                        post_content,
 
-                            post_file,
+                        post_file,
+                        post_password,
 
-                            post_create_date,
-                            post_edit_date
-                        ) VALUES (%s, %s, %s, %s, %s, %s, %s)
-                    """
+                        post_create_date,
+                        post_edit_date
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """
+
+                cursor.execute(sql, (
+                    post_account_id,
+                    post_account_display_name,
+
+                    post_title,
+                    post_content,
+
+                    post_file_file_path if post_file_file_path else None,
+                    post_password_hash if post_password_hash else None,
                     
-                    cursor.execute(sql, ( post_account_id, post_account_display_name, post_title, post_content, post_file_file_path, post_create_date, post_edit_date ))
-
-                # Not Exist : Create - Post File
-                else :
-                    sql = """
-                        INSERT INTO post (
-                            post_account_id,
-                            post_account_display_name,
-
-                            post_title,
-                            post_content,
-
-                            post_create_date,
-                            post_edit_date
-                        ) VALUES (%s, %s, %s, %s, %s, %s)
-                    """
-
-                    cursor.execute(sql, ( post_account_id, post_account_display_name, post_title, post_content, post_create_date, post_edit_date ))
+                    post_create_date,
+                    post_edit_date
+                ))                
 
                 connect_db.commit()
 
@@ -183,7 +184,9 @@ def edit_post_post(post_id) :
         post_title = request.form.get('title')
         post_content = request.form.get('content')
 
-        post_file = request.files.get('file') or None # Get - with "request.files.get()" : O / with "account_form_data.get()" : X
+         # Get - with "request.files.get()" : O / with "account_form_data.get()" : X
+        post_file = request.files.get('file') or None
+        post_password_raw = request.form.get('password') or None
 
         # Check : Require
         if (not post_title) or (not post_content) :
@@ -207,39 +210,41 @@ def edit_post_post(post_id) :
 
             post_file_file_path = f"/static/image/image_post/{post_file_file_name}"
         
+        post_password_hash = ""
+
+        # Hash : Post Password
+        if post_password_raw :
+            post_password_hash = bcrypt.hashpw(post_password_raw.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')        
+        
         # SQL Query : Insert to Post Table
         try :
             connect_db = open_db()
 
             with connect_db.cursor() as cursor :
-                # Exist : Create - Post File
-                if post_file_file_path :
-                    sql = """
-                        UPDATE post
-                        SET post_title = %s,
-                            post_content = %s,
+                sql = """
+                    UPDATE post
+                    SET post_title = %s,
+                        post_content = %s,
 
-                            post_file = %s,
+                        post_file = %s,
+                        post_password = %s,
 
-                            post_edit_date = %s
-                        WHERE post_id = %s
-                    """
+                        post_edit_date = %s
+                    WHERE post_id = %s
+                """
+
+                cursor.execute(sql, (
+                    post_title,
+                    post_content,
+
+                    post_file_file_path if post_file_file_path else None,
+                    post_password_hash if post_password_hash else None,
                     
-                    cursor.execute(sql, ( post_title, post_content, post_file_file_path, post_edit_date, post_id ))
+                    post_edit_date,
 
-                # Not Exist : Create - Post File
-                else :
-                    sql = """
-                        UPDATE post
-                        SET post_title = %s,
-                            post_content = %s,
-
-                            post_edit_date = %s
-                        WHERE post_id = %s
-                    """
-
-                    cursor.execute(sql, ( post_title, post_content, post_edit_date, post_id ))
-
+                    post_id
+                ))  
+            
                 connect_db.commit()
             
             return jsonify({"result" : 1, "post_id" : post_id})
@@ -343,6 +348,55 @@ def get_a_post(post_id) :
 
         return jsonify({"result" : 0, "error" : "Fail to Get A Post"})
     
+    finally :
+        connect_db.close()
+
+# API - Post : Get A Secret Post ( Post Password )
+@blueprint_api_post.route('/api/post_password/<int:post_id>', methods = ['POST'])
+def get_a_secret_post(post_id) :
+    data = request.get_json()
+
+    input_password = data.get('postPassword')
+
+    print(f"[ DEBUG ] Input Password : {input_password}", flush = True)
+
+    if not input_password :
+        return jsonify({"result": 0, "error": "Miss Require Fields"})
+    
+    try :
+        connect_db = open_db()
+
+        with connect_db.cursor() as cursor :
+            # SQL Query
+            sql = "SELECT post_password FROM post WHERE post_id = %s"
+
+            cursor.execute(sql, (post_id,))
+
+            post = cursor.fetchone() # Get A Post
+
+            # Case : Not Exist
+            if not post :
+                return jsonify({"result": 0, "error": "Not Exist"})
+
+            post_password_hash = post.get('post_password')
+
+            # Check
+            check_result = bcrypt.checkpw(input_password.encode("utf-8"), post_password_hash.encode("utf-8"))
+            
+            # Check - Fail
+            if not check_result :
+                return jsonify({"result": 0, "error": "Fail to Check - Post Password"})
+
+            # Create Session
+            session[f"secret_post_{post_id}"] = True
+
+            return jsonify({"result": 1, "post_id": post_id})
+
+    except Exception as e :
+        print(f"[ ERROR ] Fail to Check - Post Password : {e}")
+
+        return jsonify({"result": 0, "error": "Fail to Check - Post Password"})
+
     finally :
         connect_db.close()
 

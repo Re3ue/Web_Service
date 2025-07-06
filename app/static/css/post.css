@@ -33,8 +33,15 @@
     border-radius: 0.5rem;
 }
 
+.secret_post {
+    font-size: 1rem;
+    color: #aaa;
+}
+
 .post_title {
     font-size: 2rem;
+
+    margin: 1rem 0;
 }
 
 .post_account {

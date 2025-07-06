@@ -12,10 +12,12 @@ async function createPost() {
     const postFormTitleHTML = document.querySelector(".post_form_title");
     const postFormContentHTML = document.querySelector(".post_form_content");
     const postFormFileHTML = document.querySelector(".post_form_file");
+    const postFormPasswordHTML = document.querySelector(".post_form_password");
 
     const title = postFormTitleHTML.value;
     const content = postFormContentHTML.value;
     const file = postFormFileHTML.files[0];
+    const password = postFormPasswordHTML.value;
 
     // Check : Require
     if (!title || !content) {
@@ -30,6 +32,7 @@ async function createPost() {
     formData.append("title", title);
     formData.append("content", content);
     if (file) formData.append("file", file);
+    if (password) formData.append("password", password);
 
     // Request : Create Post to Server
     try {

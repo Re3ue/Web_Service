@@ -85,6 +85,7 @@ def initialize_db() :
                     post_content TEXT NOT NULL,
                            
                     post_file VARCHAR(255),
+                    post_password VARCHAR(255),
                            
                     post_create_date VARCHAR(20) NOT NULL,
                     post_edit_date VARCHAR(20) NOT NULL,

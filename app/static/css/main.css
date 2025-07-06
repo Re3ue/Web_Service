@@ -89,8 +89,15 @@
     border-bottom: 1px solid #ddd;
 }
 
+.all_post_element_secret_post {
+    font-size: 1rem;
+    color: #aaa;
+}
+
 .all_post_element_title {
     font-size: 1.5rem;
+
+    margin: 1rem 0;
 }
 
 .all_post_element_account {

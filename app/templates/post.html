@@ -12,6 +12,10 @@
     <button class="delete_button" data-post-id="{{ post.post_id }}">Delete</button>
 </div>
 <div class="post_container">
+    {% if post.post_password %}
+    <div class="secret_post">[ Secret Post ]</div>
+    {% endif %}
+
     <div class="post_title">{{ post.post_title }}</div>
     
     <div class="post_account">

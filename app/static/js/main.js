@@ -61,8 +61,11 @@ function renderAllPost(currentPage) {
     posts.forEach(postElement => {
         const div = document.createElement("div");
 
+        const secretPostHTML = postElement.post_password ? `<div class="all_post_element_secret_post">[ Secret Post ]</div>` : "";
+
         div.className = "all_post_element_container";
         div.innerHTML = `
+            ${secretPostHTML}
             <div class="all_post_element_title">
                 <a href="/post/${postElement.post_id}">${postElement.post_title}</a>
             </div>

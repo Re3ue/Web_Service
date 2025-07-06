@@ -52,6 +52,15 @@
     border-radius: 0.25rem;
 }
 
+.post_form_password {
+    font-size: 1rem;
+    
+    padding: 0.5rem;
+
+    border: 1px solid #aaa;
+    border-radius: 0.25rem;
+}
+
 .post_form_button {
     font-size: 1rem;
     color: #fff;

@@ -1,7 +1,7 @@
 ########## ########## ########## ##########
 
 # Import : External
-from flask import Blueprint, render_template, session
+from flask import Blueprint, render_template, session, redirect
 
 # Import : File
 from .db import open_db
@@ -106,8 +106,20 @@ def post(post_id) :
 
         post = cursor.fetchone() # Get Fetch One
 
+        # Case : Not Exist
         if not post :
             return "No Post"
+        
+        # Case - Secret Post
+        if post.get('post_password') :
+            session_key = f"secret_post_{post_id}"
+
+            # Check - Session : Fail
+            if not session.get(session_key) :
+                return render_template('post_password.html', post = post)
+            
+            # Check - Session : Success
+            session.pop(session_key, None)
 
     return render_template('post.html', post = post)
 

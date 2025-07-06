@@ -15,6 +15,8 @@
         <textarea name="" class="post_form_content" placeholder="Content" required>{{ post.post_content }}</textarea>
 
         <input type="file" class="post_form_file" accept="image/*,application/pdf">
+        
+        <input type="password" class="post_form_password" placeholder="Secret Post - Password ( Option )">
 
         <button type="submit" class="post_form_button" data-post-id="{{ post.post_id }}">Edit</button>
     </form>
